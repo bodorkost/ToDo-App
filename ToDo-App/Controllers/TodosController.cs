@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using ToDo_App.Models;
 
@@ -9,11 +10,7 @@ namespace ToDo_App.Controllers
     [ApiController]
     public class TodosController : ControllerBase
     {
-        public static IList<TodoItem> _items { get; set; }
-
-        public TodosController()
-        {
-            _items = new List<TodoItem>
+        public static IList<TodoItem> _items = new List<TodoItem>
             {
                 new TodoItem()
                 {
@@ -52,7 +49,6 @@ namespace ToDo_App.Controllers
                     ParentId = null
                 }
             };
-        }
 
         // GET api/status
         [HttpGet]
@@ -74,6 +70,19 @@ namespace ToDo_App.Controllers
             _items.Add(item);
 
             return Ok("Item successfully added to list.");
+        }
+
+        public IActionResult Delete(TodoItem item)
+        {
+            if (!_items.Any(i => i.Id == item.Id))
+            {
+                return BadRequest("Item does not exist in list.");
+            }
+
+            var removeItem = _items.First(i => i.Id == item.Id);
+            _items.Remove(removeItem);
+
+            return Ok("Item successfully removed from list.");
         }
 
         private IActionResult ValidateItem(TodoItem item)
