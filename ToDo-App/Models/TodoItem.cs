@@ -19,6 +19,6 @@ namespace ToDo_App.Models
         public DateTime Deadline { get; set; }
         public int Status { get; set; }
         public Category Category { get; set; }
-        public Guid PareintId { get; set; }
+        public Guid? ParentId { get; set; }
     }
 }
