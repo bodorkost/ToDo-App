@@ -10,11 +10,11 @@ namespace ToDo_App.Controllers
     [ApiController]
     public class TodosController : ControllerBase
     {
-        // GET api/todos
+        // GET api/status
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public IActionResult Status()
         {
-            return new string[] { "value1", "value2" };
+            return Ok(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
         }
     }
 }
