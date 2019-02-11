@@ -5,7 +5,7 @@ using ToDo_App.Models;
 
 namespace ToDo_App.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class TodosController : ControllerBase
     {
@@ -21,7 +21,7 @@ namespace ToDo_App.Controllers
                     Name = "First",
                     Description = "This is the first todo in my list.",
                     Priority = 1,
-                    Responsible = "?",
+                    Responsible = "People 1",
                     Deadline = new DateTime(2020, 01, 01),
                     Status = 0,
                     Category = Category.BUG,
@@ -33,7 +33,7 @@ namespace ToDo_App.Controllers
                     Name = "Second",
                     Description = "This is the second todo in my list.",
                     Priority = 2,
-                    Responsible = "?",
+                    Responsible = "People 2",
                     Deadline = new DateTime(2019, 05, 16),
                     Status = 0,
                     Category = Category.EPIC,
@@ -45,7 +45,7 @@ namespace ToDo_App.Controllers
                     Name = "Third",
                     Description = "This is the third todo in my list.",
                     Priority = 3,
-                    Responsible = "?",
+                    Responsible = "People 2",
                     Deadline = new DateTime(2019, 12, 12),
                     Status = 0,
                     Category = Category.TASK,
@@ -59,6 +59,47 @@ namespace ToDo_App.Controllers
         public IActionResult Status()
         {
             return Ok(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+        }
+
+        [HttpPost]
+        public IActionResult Create(TodoItem item)
+        {
+            var validationResult = ValidateItem(item);
+            if (validationResult is BadRequestObjectResult)
+            {
+                return BadRequest((validationResult as BadRequestObjectResult).Value);
+            }
+
+            item.Id = Guid.NewGuid();
+            _items.Add(item);
+
+            return Ok("Item successfully added to list.");
+        }
+
+        private IActionResult ValidateItem(TodoItem item)
+        {
+            if (string.IsNullOrEmpty(item.Name))
+            {
+                return BadRequest("Name cannot be empty.");
+            }
+            if (string.IsNullOrEmpty(item.Description))
+            {
+                return BadRequest("Description cannot be empty.");
+            }
+            if (string.IsNullOrEmpty(item.Responsible))
+            {
+                return BadRequest("Responsible cannot be empty.");
+            }
+            if (item.Deadline.Date < DateTime.Now.Date)
+            {
+                return BadRequest("Deadline must be later than actual date.");
+            }
+            if (item.Category == Category.NONE)
+            {
+                return BadRequest("Category cannot be empty.");
+            }
+
+            return Ok();
         }
     }
 }

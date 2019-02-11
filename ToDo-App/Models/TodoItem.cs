@@ -4,6 +4,7 @@ namespace ToDo_App.Models
 {
     public enum Category
     {
+        NONE,
         BUG,
         TASK,
         EPIC
