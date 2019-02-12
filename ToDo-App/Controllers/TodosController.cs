@@ -85,6 +85,26 @@ namespace ToDo_App.Controllers
             return Ok("Item successfully removed from list.");
         }
 
+        public IActionResult Read(Guid id)
+        {
+            if (!_items.Any(i => i.Id == id))
+            {
+                return BadRequest("Item does not exist in list.");
+            }
+
+            return Ok(_items.First(i => i.Id == id));
+        }
+
+        public IActionResult ReadAll()
+        {
+            if (_items.Count == 0)
+            {
+                return Ok("List is empty.");
+            }
+
+            return Ok(_items);
+        }
+
         private IActionResult ValidateItem(TodoItem item)
         {
             if (string.IsNullOrEmpty(item.Name))
