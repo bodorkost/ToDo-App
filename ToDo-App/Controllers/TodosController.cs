@@ -6,7 +6,7 @@ using ToDo_App.Models;
 
 namespace ToDo_App.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class TodosController : ControllerBase
     {
@@ -50,7 +50,6 @@ namespace ToDo_App.Controllers
                 }
             };
 
-        [HttpGet]
         public IActionResult Status()
         {
             return Ok(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
@@ -71,9 +70,10 @@ namespace ToDo_App.Controllers
             return Ok("Item successfully added to list.");
         }
 
-        public IActionResult Update(TodoItem item)
+        [HttpPatch("{id}")]
+        public IActionResult Update(Guid id, TodoItem item)
         {
-            var updateItem = _items.FirstOrDefault(i => i.Id == item.Id);
+            var updateItem = _items.FirstOrDefault(i => i.Id == id);
             if (updateItem == null)
             {
                 return BadRequest("Item does not exist in list.");
@@ -97,9 +97,10 @@ namespace ToDo_App.Controllers
             return Ok("Item successfully updated.");
         }
 
-        public IActionResult Delete(TodoItem item)
+        [HttpDelete("{id}")]
+        public IActionResult Delete(Guid id)
         {
-            var removeItem = _items.FirstOrDefault(i => i.Id == item.Id);
+            var removeItem = _items.FirstOrDefault(i => i.Id == id);
             if (removeItem == null)
             {
                 return BadRequest("Item does not exist in list.");
@@ -110,6 +111,7 @@ namespace ToDo_App.Controllers
             return Ok("Item successfully removed from list.");
         }
 
+        [HttpGet("{id}")]
         public IActionResult Read(Guid id)
         {
             var readItem = _items.FirstOrDefault(i => i.Id == id);
@@ -121,7 +123,8 @@ namespace ToDo_App.Controllers
             return Ok(readItem);
         }
 
-        public IActionResult ReadAll()
+        [HttpGet]
+        public IActionResult Read()
         {
             if (_items.Count == 0)
             {
