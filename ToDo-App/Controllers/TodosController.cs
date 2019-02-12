@@ -50,7 +50,6 @@ namespace ToDo_App.Controllers
                 }
             };
 
-        // GET api/status
         [HttpGet]
         public IActionResult Status()
         {
@@ -74,7 +73,8 @@ namespace ToDo_App.Controllers
 
         public IActionResult Update(TodoItem item)
         {
-            if (!_items.Any(i => i.Id == item.Id))
+            var updateItem = _items.FirstOrDefault(i => i.Id == item.Id);
+            if (updateItem == null)
             {
                 return BadRequest("Item does not exist in list.");
             }
@@ -85,27 +85,26 @@ namespace ToDo_App.Controllers
                 return BadRequest((validationResult as BadRequestObjectResult).Value);
             }
 
-            var listItem = _items.First(i => i.Id == item.Id);
-            listItem.Name = item.Name;
-            listItem.Description = item.Description;
-            listItem.Priority = item.Priority;
-            listItem.Responsible = item.Responsible;
-            listItem.Deadline = item.Deadline;
-            listItem.Status = item.Status;
-            listItem.Category = item.Category;
-            listItem.ParentId = item.ParentId;
+            updateItem.Name = item.Name;
+            updateItem.Description = item.Description;
+            updateItem.Priority = item.Priority;
+            updateItem.Responsible = item.Responsible;
+            updateItem.Deadline = item.Deadline;
+            updateItem.Status = item.Status;
+            updateItem.Category = item.Category;
+            updateItem.ParentId = item.ParentId;
 
             return Ok("Item successfully updated.");
         }
 
         public IActionResult Delete(TodoItem item)
         {
-            if (!_items.Any(i => i.Id == item.Id))
+            var removeItem = _items.FirstOrDefault(i => i.Id == item.Id);
+            if (removeItem == null)
             {
                 return BadRequest("Item does not exist in list.");
             }
 
-            var removeItem = _items.First(i => i.Id == item.Id);
             _items.Remove(removeItem);
 
             return Ok("Item successfully removed from list.");
@@ -113,12 +112,13 @@ namespace ToDo_App.Controllers
 
         public IActionResult Read(Guid id)
         {
-            if (!_items.Any(i => i.Id == id))
+            var readItem = _items.FirstOrDefault(i => i.Id == id);
+            if (readItem == null)
             {
                 return BadRequest("Item does not exist in list.");
             }
 
-            return Ok(_items.First(i => i.Id == id));
+            return Ok(readItem);
         }
 
         public IActionResult ReadAll()
