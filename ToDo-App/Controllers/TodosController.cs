@@ -72,6 +72,32 @@ namespace ToDo_App.Controllers
             return Ok("Item successfully added to list.");
         }
 
+        public IActionResult Update(TodoItem item)
+        {
+            if (!_items.Any(i => i.Id == item.Id))
+            {
+                return BadRequest("Item does not exist in list.");
+            }
+
+            var validationResult = ValidateItem(item);
+            if (validationResult is BadRequestObjectResult)
+            {
+                return BadRequest((validationResult as BadRequestObjectResult).Value);
+            }
+
+            var listItem = _items.First(i => i.Id == item.Id);
+            listItem.Name = item.Name;
+            listItem.Description = item.Description;
+            listItem.Priority = item.Priority;
+            listItem.Responsible = item.Responsible;
+            listItem.Deadline = item.Deadline;
+            listItem.Status = item.Status;
+            listItem.Category = item.Category;
+            listItem.ParentId = item.ParentId;
+
+            return Ok("Item successfully updated.");
+        }
+
         public IActionResult Delete(TodoItem item)
         {
             if (!_items.Any(i => i.Id == item.Id))
