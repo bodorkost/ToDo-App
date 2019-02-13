@@ -10,7 +10,7 @@ namespace Infrastructure.Services
 {
     public class TodoItemService : ITodoItemService
     {
-        TodoContext _dbContext;
+        private TodoContext _dbContext;
 
         public TodoItemService(TodoContext context)
         {
@@ -21,9 +21,9 @@ namespace Infrastructure.Services
         {
             entity.Id = Guid.NewGuid();
             entity.Created = DateTime.Now;
-            entity.Creator = "System";
+            //TODO entity.CreatedById 
             entity.Modified = DateTime.Now;
-            entity.Modifier = "System";
+            //TODO entity.ModifiedById 
 
             _dbContext.TodoItems.Add(entity);
             _dbContext.SaveChanges();
@@ -59,7 +59,7 @@ namespace Infrastructure.Services
             item.ParentId = entity.ParentId;
 
             item.Modified = DateTime.Now;
-            item.Modifier = "System";
+            //TODO item.ModifiedById 
 
             _dbContext.Entry(item).State = EntityState.Modified;
             _dbContext.SaveChanges();
@@ -76,6 +76,8 @@ namespace Infrastructure.Services
             }
 
             item.IsDeleted = true;
+            item.Deleted = DateTime.Now;
+            //TODO item.DeletedById
 
             _dbContext.Entry(item).State = EntityState.Modified;
             _dbContext.SaveChanges();

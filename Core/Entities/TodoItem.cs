@@ -35,15 +35,18 @@ namespace Core.Models
         [DataType(DataType.DateTime)]
         public DateTime Created { get; set; }
 
-        [StringLength(50)]
-        public string Creator { get; set; }
+        public Guid CreatedById { get; set; }
 
         [Required]
         [DataType(DataType.DateTime)]
         public DateTime Modified { get; set; }
 
-        [StringLength(50)]
-        public string Modifier { get; set; }
+        public Guid ModifiedById { get; set; }
+
+        [DataType(DataType.DateTime)]
+        public DateTime Deleted { get; set; }
+
+        public Guid DeletedById { get; set; }
 
         [Required]
         public bool IsDeleted { get; set; }
