@@ -21,9 +21,9 @@ namespace Infrastructure.Services
         {
             entity.Id = Guid.NewGuid();
             entity.Created = DateTime.Now;
-            entity.Creator = $"DUMMY_{entity.Created.ToString("yyyyMMddHHmmss")}";
+            entity.Creator = "System";
             entity.Modified = DateTime.Now;
-            entity.Modifier = $"DUMMY_{entity.Modified.ToString("yyyyMMddHHmmss")}";
+            entity.Modifier = "System";
 
             _dbContext.TodoItems.Add(entity);
             _dbContext.SaveChanges();
@@ -33,13 +33,12 @@ namespace Infrastructure.Services
 
         public IEnumerable<TodoItem> GetAll()
         {
-            return _dbContext.TodoItems.Where(t => !t.IsDeleted).AsEnumerable();
+            return _dbContext.TodoItems.AsEnumerable();
         }
 
         public TodoItem GetById(Guid id)
         {
-            var item = _dbContext.TodoItems.Find(id);
-            return item == null || item.IsDeleted ? null : item;
+            return _dbContext.TodoItems.Find(id);
         }
 
         public TodoItem Edit(Guid id, TodoItem entity)
@@ -60,7 +59,7 @@ namespace Infrastructure.Services
             item.ParentId = entity.ParentId;
 
             item.Modified = DateTime.Now;
-            item.Modifier = $"DUMMY_{item.Modified.ToString("yyyyMMddHHmmss")}";
+            item.Modifier = "System";
 
             _dbContext.Entry(item).State = EntityState.Modified;
             _dbContext.SaveChanges();

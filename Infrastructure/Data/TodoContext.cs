@@ -10,5 +10,12 @@ namespace Infrastructure.Data
         { }
 
         public DbSet<TodoItem> TodoItems { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder
+                .Entity<TodoItem>()
+                .HasQueryFilter(t => !t.IsDeleted);
+        }
     }
 }
