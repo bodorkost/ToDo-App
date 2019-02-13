@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Infrastructure.Data;
 using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using ToDo_App.Extensions;
 
 namespace ToDo_App.Controllers
 {
@@ -31,11 +32,7 @@ namespace ToDo_App.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(
-                    ModelState
-                        .Where(p => p.Value.ValidationState == ModelValidationState.Invalid)
-                        .Select(p => new { key = p.Key, propErrors = p.Value.Errors.Select(e => e.ErrorMessage) })
-                );
+                return BadRequest(ModelState.GetErrors());
             }
 
             _todoItemService.Create(item);
@@ -48,11 +45,7 @@ namespace ToDo_App.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(
-                    ModelState
-                        .Where(p => p.Value.ValidationState == ModelValidationState.Invalid)
-                        .Select(p => new { key = p.Key, propErrors = p.Value.Errors.Select(e => e.ErrorMessage) })
-                );
+                return BadRequest(ModelState.GetErrors());
             }
 
             var updateItem = _todoItemService.Edit(id, item);
