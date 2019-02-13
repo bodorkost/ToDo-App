@@ -6,6 +6,7 @@ using Core.Types;
 using Microsoft.AspNetCore.Mvc;
 using Infrastructure.Data;
 using Infrastructure.Interfaces;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace ToDo_App.Controllers
 {
@@ -28,10 +29,13 @@ namespace ToDo_App.Controllers
         [HttpPost]
         public IActionResult Create(TodoItem item)
         {
-            var validationResult = ValidateItem(item);
-            if (validationResult is BadRequestObjectResult)
+            if (!ModelState.IsValid)
             {
-                return BadRequest((validationResult as BadRequestObjectResult).Value);
+                return BadRequest(
+                    ModelState
+                        .Where(p => p.Value.ValidationState == ModelValidationState.Invalid)
+                        .Select(p => new { key = p.Key, propErrors = p.Value.Errors.Select(e => e.ErrorMessage) })
+                );
             }
 
             _todoItemService.Create(item);
@@ -42,10 +46,13 @@ namespace ToDo_App.Controllers
         [HttpPatch("{id}")]
         public IActionResult Update(Guid id, TodoItem item)
         {
-            var validationResult = ValidateItem(item);
-            if (validationResult is BadRequestObjectResult)
+            if (!ModelState.IsValid)
             {
-                return BadRequest((validationResult as BadRequestObjectResult).Value);
+                return BadRequest(
+                    ModelState
+                        .Where(p => p.Value.ValidationState == ModelValidationState.Invalid)
+                        .Select(p => new { key = p.Key, propErrors = p.Value.Errors.Select(e => e.ErrorMessage) })
+                );
             }
 
             var updateItem = _todoItemService.Edit(id, item);
@@ -85,24 +92,6 @@ namespace ToDo_App.Controllers
         public IActionResult Read()
         {
             return Ok(_todoItemService.GetAll());
-        }
-
-        private IActionResult ValidateItem(TodoItem item)
-        {
-            if (string.IsNullOrEmpty(item.Name))
-            {
-                return BadRequest("Name cannot be empty.");
-            }
-            if (item.Priority == Priority.NONE)
-            {
-                return BadRequest("Priority cannot be empty.");
-            }
-            if (item.Deadline.Date < DateTime.Now.Date)
-            {
-                return BadRequest("Deadline must be later than actual date.");
-            }
-
-            return Ok();
         }
     }
 }

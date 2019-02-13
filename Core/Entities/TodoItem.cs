@@ -35,7 +35,6 @@ namespace Core.Models
         [DataType(DataType.DateTime)]
         public DateTime Created { get; set; }
 
-        [Required]
         [StringLength(50)]
         public string Creator { get; set; }
 
@@ -43,7 +42,6 @@ namespace Core.Models
         [DataType(DataType.DateTime)]
         public DateTime Modified { get; set; }
 
-        [Required]
         [StringLength(50)]
         public string Modifier { get; set; }
 
