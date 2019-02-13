@@ -5,6 +5,7 @@ using Core.Models;
 using Core.Types;
 using Microsoft.AspNetCore.Mvc;
 using Infrastructure.Data;
+using Core.Interfaces;
 
 namespace ToDo_App.Controllers
 {
@@ -12,11 +13,11 @@ namespace ToDo_App.Controllers
     [ApiController]
     public class TodosController : ControllerBase
     {
-        TodoContext _context;
+        private readonly ITodoItemService _todoItemService;
 
-        public TodosController(TodoContext context)
+        public TodosController(ITodoItemService todoItemService)
         {
-            _context = context;
+            _todoItemService = todoItemService;
         }
 
         public IActionResult Status()
@@ -33,9 +34,7 @@ namespace ToDo_App.Controllers
                 return BadRequest((validationResult as BadRequestObjectResult).Value);
             }
 
-            item.Id = Guid.NewGuid();
-            _context.TodoItems.Add(item);
-            _context.SaveChanges();
+            _todoItemService.Create(item);
 
             return Ok("Item successfully added to list.");
         }
@@ -43,28 +42,17 @@ namespace ToDo_App.Controllers
         [HttpPatch("{id}")]
         public IActionResult Update(Guid id, TodoItem item)
         {
-            var updateItem = _context.TodoItems.Find(id);
-            if (updateItem == null)
-            {
-                return BadRequest("Item does not exist in list.");
-            }
-
             var validationResult = ValidateItem(item);
             if (validationResult is BadRequestObjectResult)
             {
                 return BadRequest((validationResult as BadRequestObjectResult).Value);
             }
 
-            updateItem.Name = item.Name;
-            updateItem.Description = item.Description;
-            updateItem.Priority = item.Priority;
-            updateItem.Responsible = item.Responsible;
-            updateItem.Deadline = item.Deadline;
-            updateItem.Status = item.Status;
-            updateItem.Category = item.Category;
-            updateItem.ParentId = item.ParentId;
-
-            _context.SaveChanges();
+            var updateItem = _todoItemService.Edit(id, item);
+            if (updateItem == null)
+            {
+                return BadRequest("Item does not exist in list.");
+            }
 
             return Ok("Item successfully updated.");
         }
@@ -72,14 +60,11 @@ namespace ToDo_App.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
-            var removeItem = _context.TodoItems.Find(id);
+            var removeItem = _todoItemService.Delete(id);
             if (removeItem == null)
             {
                 return BadRequest("Item does not exist in list.");
             }
-
-            _context.TodoItems.Remove(removeItem);
-            _context.SaveChanges();
 
             return Ok("Item successfully removed from list.");
         }
@@ -87,7 +72,7 @@ namespace ToDo_App.Controllers
         [HttpGet("{id}")]
         public IActionResult Read(Guid id)
         {
-            var readItem = _context.TodoItems.Find(id);
+            var readItem = _todoItemService.GetById(id);
             if (readItem == null)
             {
                 return BadRequest("Item does not exist in list.");
@@ -99,7 +84,7 @@ namespace ToDo_App.Controllers
         [HttpGet]
         public IActionResult Read()
         {
-            return Ok(_context.TodoItems.AsEnumerable());
+            return Ok(_todoItemService.GetAll());
         }
 
         private IActionResult ValidateItem(TodoItem item)
