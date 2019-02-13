@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Core.Models;
+using Core.Types;
 using Microsoft.AspNetCore.Mvc;
-using ToDo_App.Models;
+using Infrastructure.Data;
 
 namespace ToDo_App.Controllers
 {
@@ -10,45 +12,12 @@ namespace ToDo_App.Controllers
     [ApiController]
     public class TodosController : ControllerBase
     {
-        public static IList<TodoItem> _items = new List<TodoItem>
-            {
-                new TodoItem()
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "First",
-                    Description = "This is the first todo in my list.",
-                    Priority = 1,
-                    Responsible = "People 1",
-                    Deadline = new DateTime(2020, 01, 01),
-                    Status = 0,
-                    Category = Category.BUG,
-                    ParentId = null
-                },
-                new TodoItem()
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "Second",
-                    Description = "This is the second todo in my list.",
-                    Priority = 2,
-                    Responsible = "People 2",
-                    Deadline = new DateTime(2019, 05, 16),
-                    Status = 0,
-                    Category = Category.EPIC,
-                    ParentId = null
-                },
-                new TodoItem()
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "Third",
-                    Description = "This is the third todo in my list.",
-                    Priority = 3,
-                    Responsible = "People 2",
-                    Deadline = new DateTime(2019, 12, 12),
-                    Status = 0,
-                    Category = Category.TASK,
-                    ParentId = null
-                }
-            };
+        TodoContext _context;
+
+        public TodosController(TodoContext context)
+        {
+            _context = context;
+        }
 
         public IActionResult Status()
         {
@@ -65,7 +34,8 @@ namespace ToDo_App.Controllers
             }
 
             item.Id = Guid.NewGuid();
-            _items.Add(item);
+            _context.TodoItems.Add(item);
+            _context.SaveChanges();
 
             return Ok("Item successfully added to list.");
         }
@@ -73,7 +43,7 @@ namespace ToDo_App.Controllers
         [HttpPatch("{id}")]
         public IActionResult Update(Guid id, TodoItem item)
         {
-            var updateItem = _items.FirstOrDefault(i => i.Id == id);
+            var updateItem = _context.TodoItems.Find(id); //.FirstOrDefault(i => i.Id == id);
             if (updateItem == null)
             {
                 return BadRequest("Item does not exist in list.");
@@ -94,19 +64,22 @@ namespace ToDo_App.Controllers
             updateItem.Category = item.Category;
             updateItem.ParentId = item.ParentId;
 
+            _context.SaveChanges();
+
             return Ok("Item successfully updated.");
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
-            var removeItem = _items.FirstOrDefault(i => i.Id == id);
+            var removeItem = _context.TodoItems.Find(id);
             if (removeItem == null)
             {
                 return BadRequest("Item does not exist in list.");
             }
 
-            _items.Remove(removeItem);
+            _context.TodoItems.Remove(removeItem);
+            _context.SaveChanges();
 
             return Ok("Item successfully removed from list.");
         }
@@ -114,7 +87,7 @@ namespace ToDo_App.Controllers
         [HttpGet("{id}")]
         public IActionResult Read(Guid id)
         {
-            var readItem = _items.FirstOrDefault(i => i.Id == id);
+            var readItem = _context.TodoItems.Find(id);
             if (readItem == null)
             {
                 return BadRequest("Item does not exist in list.");
@@ -126,12 +99,7 @@ namespace ToDo_App.Controllers
         [HttpGet]
         public IActionResult Read()
         {
-            if (_items.Count == 0)
-            {
-                return Ok("List is empty.");
-            }
-
-            return Ok(_items);
+            return Ok(_context.TodoItems.AsEnumerable());
         }
 
         private IActionResult ValidateItem(TodoItem item)
