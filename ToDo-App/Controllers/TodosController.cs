@@ -43,7 +43,7 @@ namespace ToDo_App.Controllers
         [HttpPatch("{id}")]
         public IActionResult Update(Guid id, TodoItem item)
         {
-            var updateItem = _context.TodoItems.Find(id); //.FirstOrDefault(i => i.Id == id);
+            var updateItem = _context.TodoItems.Find(id);
             if (updateItem == null)
             {
                 return BadRequest("Item does not exist in list.");
@@ -108,21 +108,13 @@ namespace ToDo_App.Controllers
             {
                 return BadRequest("Name cannot be empty.");
             }
-            if (string.IsNullOrEmpty(item.Description))
+            if (item.Priority == Priority.NONE)
             {
-                return BadRequest("Description cannot be empty.");
-            }
-            if (string.IsNullOrEmpty(item.Responsible))
-            {
-                return BadRequest("Responsible cannot be empty.");
+                return BadRequest("Priority cannot be empty.");
             }
             if (item.Deadline.Date < DateTime.Now.Date)
             {
                 return BadRequest("Deadline must be later than actual date.");
-            }
-            if (item.Category == Category.NONE)
-            {
-                return BadRequest("Category cannot be empty.");
             }
 
             return Ok();
