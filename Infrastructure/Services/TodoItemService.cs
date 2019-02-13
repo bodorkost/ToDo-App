@@ -1,4 +1,4 @@
-﻿using Core.Interfaces;
+﻿using Infrastructure.Interfaces;
 using Core.Models;
 using Infrastructure.Data;
 using System;
