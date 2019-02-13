@@ -18,5 +18,6 @@ namespace Core.Models
         public string Creator { get; set; }
         public DateTime Modified { get; set; }
         public string Modifier { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }
