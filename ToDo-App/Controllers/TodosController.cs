@@ -5,7 +5,7 @@ using Core.Models;
 using Core.Types;
 using Microsoft.AspNetCore.Mvc;
 using Infrastructure.Data;
-using Core.Interfaces;
+using Infrastructure.Interfaces;
 
 namespace ToDo_App.Controllers
 {
