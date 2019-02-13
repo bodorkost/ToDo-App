@@ -93,5 +93,27 @@ namespace ToDo_App.Controllers
         {
             return Ok(_todoItemService.GetAll());
         }
+
+        [HttpGet("ByCategory/{category}")]
+        public IActionResult ReadByCategory(Category category)
+        {
+            return Ok(_todoItemService.GetAll()
+                                      .Where(t => t.Category == category));
+        }
+
+        [HttpGet("Recent")]
+        public IActionResult ReadByRecent()
+        {
+            return Ok(_todoItemService.GetAll()
+                                      .Where(t => t.Deadline > DateTime.Now.AddHours(-2)));
+        }
+
+        [HttpGet("WithCategory")]
+        public IActionResult ReadWithCategory()
+        {
+            return Ok(_todoItemService.GetAll()
+                                      .GroupBy(t => t.Category, (category, todos) => 
+                                        new { Category = category.ToString(), Todos = todos }));
+        }
     }
 }
