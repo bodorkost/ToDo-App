@@ -8,7 +8,7 @@ namespace Core.Models
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public int Priority { get; set; }
+        public Priority Priority { get; set; }
         public string Responsible { get; set; }
         public DateTime Deadline { get; set; }
         public int Status { get; set; }
