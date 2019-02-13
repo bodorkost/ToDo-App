@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Core
+namespace Infrastructure.Data
 {
     public class TodoContext : DbContext
     {
