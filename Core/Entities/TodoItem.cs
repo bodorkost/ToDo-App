@@ -25,7 +25,7 @@ namespace Core.Models
         [DataType(DataType.DateTime)]
         public DateTime Deadline { get; set; }
 
-        public int Status { get; set; }
+        public Status Status { get; set; }
 
         public Category Category { get; set; }
 
