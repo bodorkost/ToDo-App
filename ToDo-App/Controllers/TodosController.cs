@@ -7,6 +7,8 @@ using Infrastructure.Interfaces;
 using ToDo_App.Extensions;
 using System.Collections.Generic;
 using ToDo_App.Models;
+using Core;
+using Microsoft.Extensions.Options;
 
 namespace ToDo_App.Controllers
 {
@@ -15,10 +17,12 @@ namespace ToDo_App.Controllers
     public class TodosController : ControllerBase
     {
         private readonly ITodoItemService _todoItemService;
+        private readonly IOptions<TodoSettings> _config;
 
-        public TodosController(ITodoItemService todoItemService)
+        public TodosController(ITodoItemService todoItemService, IOptions<TodoSettings> config)
         {
             _todoItemService = todoItemService;
+            _config = config;
         }
 
         [HttpPost]
@@ -92,7 +96,8 @@ namespace ToDo_App.Controllers
         public IActionResult ReadByRecent()
         {
             return Ok(_todoItemService.GetAll()
-                                      .Where(t => t.Deadline > DateTime.Now.AddHours(-2)));
+                                      .Where(t => t.Status == Status.OPEN 
+                                            || (t.Status == Status.CLOSED && t.Modified > DateTime.Now.AddHours(_config.Value.RecentHours) && t.Modified < DateTime.Now)));
         }
 
         [HttpGet("WithCategory")]
