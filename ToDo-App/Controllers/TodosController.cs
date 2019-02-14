@@ -21,11 +21,6 @@ namespace ToDo_App.Controllers
             _todoItemService = todoItemService;
         }
 
-        public IActionResult Status()
-        {
-            return Ok(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-        }
-
         [HttpPost]
         public IActionResult Create(TodoItem item)
         {

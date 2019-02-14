@@ -33,6 +33,7 @@ namespace ToDo_App
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
             );
 
+            services.AddHealthChecks();
             services.AddCors();
 
             services.AddScoped(typeof(ITodoItemService), typeof(TodoItemService));
@@ -54,7 +55,7 @@ namespace ToDo_App
             }
 
             app.UseHttpsRedirection();
-
+            app.UseHealthChecks("/health");
             app.UseCors(options => options
                 .AllowAnyOrigin()
             );
