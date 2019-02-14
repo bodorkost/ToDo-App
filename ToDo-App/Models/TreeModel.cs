@@ -1,4 +1,5 @@
 ﻿using Core.Models;
+using System;
 using System.Collections.Generic;
 
 namespace ToDo_App.Models
@@ -7,6 +8,6 @@ namespace ToDo_App.Models
     {
         public TodoItem TodoItem { get; set; }
 
-        public IEnumerable<TreeModel> Children { get; set; }
+        public ICollection<TreeModel> Children { get; set; } = new List<TreeModel>();
     }
 }

@@ -111,10 +111,27 @@ namespace ToDo_App.Controllers
         [HttpGet("Tree")]
         public IActionResult ReadTree()
         {
-            return Ok(FillTreeRecursive(_todoItemService.GetAll()));
+            //return Ok(FillTreeRecursive(_todoItemService.GetAll()));
+            return Ok(FillTree(_todoItemService.GetAll().OrderBy(t => t.Modified)));
         }
 
-        private IEnumerable<TreeModel> FillTreeRecursive(IEnumerable<TodoItem> todos, Guid? parentId = null)
+        private IEnumerable<TreeModel> FillTree(IEnumerable<TodoItem> todos)
+        {
+            var tree = todos.Select(t => new TreeModel() { TodoItem = t }).ToList();
+            var dict = tree.ToDictionary(t => t.TodoItem.Id, t => t);
+
+            foreach (var item in tree)
+            {
+                if(item.TodoItem.ParentId != null)
+                {
+                    dict[item.TodoItem.ParentId.Value].Children.Add(item);
+                }
+            }
+
+            return tree.Where(t => t.TodoItem.ParentId == null);
+        }
+
+        private ICollection<TreeModel> FillTreeRecursive(IEnumerable<TodoItem> todos, Guid? parentId = null)
         {
             var tree = new List<TreeModel>();
 
