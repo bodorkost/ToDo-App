@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Core;
+using ToDo_App.Filters;
 
 namespace ToDo_App
 {
@@ -35,7 +36,8 @@ namespace ToDo_App
 
             services.AddScoped(typeof(ITodoItemService), typeof(TodoItemService));
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(options => options.Filters.Add(typeof(AuditFilter)))
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
