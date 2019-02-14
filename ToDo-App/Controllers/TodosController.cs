@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Core.Models;
 using Core.Types;
 using Microsoft.AspNetCore.Mvc;
-using Infrastructure.Data;
 using Infrastructure.Interfaces;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using ToDo_App.Extensions;
+using System.Collections.Generic;
+using ToDo_App.Models;
 
 namespace ToDo_App.Controllers
 {
@@ -107,6 +106,28 @@ namespace ToDo_App.Controllers
             return Ok(_todoItemService.GetAll()
                                       .GroupBy(t => t.Category, (category, todos) => 
                                         new { Category = category.ToString(), Todos = todos }));
+        }
+
+        [HttpGet("Tree")]
+        public IActionResult ReadTree()
+        {
+            return Ok(FillTreeRecursive(_todoItemService.GetAll()));
+        }
+
+        private IEnumerable<TreeModel> FillTreeRecursive(IEnumerable<TodoItem> todos, Guid? parentId = null)
+        {
+            var tree = new List<TreeModel>();
+
+            foreach (var item in todos.Where(x => x.ParentId.Equals(parentId)))
+            {
+                tree.Add(new TreeModel
+                {
+                    TodoItem = item,
+                    Children = FillTreeRecursive(todos, item.Id)
+                });
+            }
+
+            return tree;
         }
     }
 }
