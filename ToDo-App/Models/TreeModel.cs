@@ -1,5 +1,4 @@
-﻿using Core.Models;
-using System;
+﻿using Core.Entities;
 using System.Collections.Generic;
 
 namespace ToDo_App.Models

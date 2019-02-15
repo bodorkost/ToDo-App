@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Core.Types;
 
-namespace Core.Models
+namespace Core.Entities
 {
     public class TodoItem
     {

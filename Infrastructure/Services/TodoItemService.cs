@@ -1,5 +1,5 @@
 ﻿using Infrastructure.Interfaces;
-using Core.Models;
+using Core.Entities;
 using Infrastructure.Data;
 using System;
 using System.Linq;

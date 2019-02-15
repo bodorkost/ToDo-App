@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using Core.Models;
+using Core.Entities;
 using Core.Types;
 using Microsoft.AspNetCore.Mvc;
 using Infrastructure.Interfaces;
