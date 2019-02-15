@@ -11,6 +11,8 @@ namespace Infrastructure.Data
 
         public DbSet<TodoItem> TodoItems { get; set; }
 
+        public DbSet<Category> Categories { get; set; }
+
         public DbSet<Audit> Audits { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
