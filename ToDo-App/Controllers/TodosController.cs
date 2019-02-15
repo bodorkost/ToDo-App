@@ -9,6 +9,9 @@ using System.Collections.Generic;
 using ToDo_App.Models;
 using Core;
 using Microsoft.Extensions.Options;
+using System.IO;
+using System.Reflection;
+using Microsoft.AspNetCore.Hosting;
 
 namespace ToDo_App.Controllers
 {
@@ -18,11 +21,16 @@ namespace ToDo_App.Controllers
     {
         private readonly ITodoItemService _todoItemService;
         private readonly IOptions<TodoSettings> _config;
+        private readonly IHostingEnvironment _env;
 
-        public TodosController(ITodoItemService todoItemService, IOptions<TodoSettings> config)
+        public TodosController(
+            ITodoItemService todoItemService, 
+            IOptions<TodoSettings> config, 
+            IHostingEnvironment env)
         {
             _todoItemService = todoItemService;
             _config = config;
+            _env = env;
         }
 
         [HttpPost]
@@ -113,6 +121,26 @@ namespace ToDo_App.Controllers
         {
             //return Ok(FillTreeRecursive(_todoItemService.GetAll()));
             return Ok(FillTree(_todoItemService.GetAll().OrderBy(t => t.Modified)));
+        }
+
+        [HttpGet("Thumbnail/{category}")]
+        public IActionResult GetCategoryThumbnail(string category)
+        {
+            var path = Path.Combine(_env.ContentRootPath, "Assets", "Images", "Category", $"{category.ToLower()}.png");
+
+            if (!System.IO.File.Exists(path))
+            {
+                return NotFound("Category was not found.");
+            }
+            
+            var memory = new MemoryStream();
+            using (var stream = new FileStream(path, FileMode.Open))
+            {
+                stream.CopyTo(memory);
+            }
+            memory.Position = 0;
+
+            return File(memory, "application /octet-stream", Path.GetFileName(path));
         }
 
         private IEnumerable<TreeModel> FillTree(IEnumerable<TodoItem> todos)
