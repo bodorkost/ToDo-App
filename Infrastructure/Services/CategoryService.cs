@@ -1,11 +1,12 @@
 ﻿using Core.Entities;
 using Infrastructure.Data;
+using Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 
 namespace Infrastructure.Services
 {
-    public class CategoryService : BaseService<Category>
+    public class CategoryService : BaseService<Category>, ICategoryService
     {
         public CategoryService(TodoContext context) : base(context)
         {
