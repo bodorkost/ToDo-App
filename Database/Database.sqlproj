@@ -62,6 +62,7 @@
   <ItemGroup>
     <Build Include="Tables\TodoItems.sql" />
     <Build Include="Tables\Audits.sql" />
+    <Build Include="Tables\Categories.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Database.publish.xml" />

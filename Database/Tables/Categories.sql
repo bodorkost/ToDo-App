@@ -1,0 +1,12 @@
+﻿CREATE TABLE [dbo].[Categories]
+(
+	[Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, 
+    [DisplayName] NVARCHAR(50) NOT NULL, 
+    [Created] DATETIME2 NOT NULL, 
+    [CreatedById] UNIQUEIDENTIFIER NULL, 
+    [Modified] DATETIME2 NOT NULL, 
+    [ModifiedById] UNIQUEIDENTIFIER NULL, 
+    [Deleted] DATETIME2 NOT NULL, 
+    [DeletedById] UNIQUEIDENTIFIER NULL, 
+    [IsDeleted] BIT NOT NULL DEFAULT 0
+)

@@ -7,7 +7,7 @@
     [Responsible] NVARCHAR(50) NULL, 
     [Deadline] DATETIME2 NULL, 
     [Status] INT NULL, 
-    [Category] INT NULL, 
+    [CategoryId] UNIQUEIDENTIFIER NULL, 
     [ParentId] UNIQUEIDENTIFIER NULL, 
     [Created] DATETIME2 NOT NULL, 
     [CreatedById] UNIQUEIDENTIFIER NULL, 
@@ -15,5 +15,6 @@
     [ModifiedById] UNIQUEIDENTIFIER NULL, 
     [Deleted] DATETIME2 NULL, 
     [DeletedById] UNIQUEIDENTIFIER NULL, 
-    [IsDeleted] BIT NOT NULL DEFAULT 0
+    [IsDeleted] BIT NOT NULL DEFAULT 0, 
+    CONSTRAINT [FK_TodoItems_Categories] FOREIGN KEY ([CategoryId]) REFERENCES [Categories]([Id])
 )
