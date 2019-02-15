@@ -30,13 +30,15 @@ namespace ToDo_App
 
             services.AddOptions();
             services.Configure<TodoSettings>(Configuration);
+            services.Configure<AuditSettings>(Configuration.GetSection("AuditSettings"));
 
             services.AddHealthChecks();
             services.AddCors();
 
             services.AddScoped(typeof(ITodoItemService), typeof(TodoItemService));
 
-            services.AddMvc(options => options.Filters.Add(typeof(AuditFilter)))
+            services.AddMvc(options => 
+                    options.Filters.Add(typeof(AuditFilter)))
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
