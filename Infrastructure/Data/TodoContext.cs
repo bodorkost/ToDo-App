@@ -1,4 +1,4 @@
-﻿using Core.Models;
+﻿using Core.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data
@@ -10,6 +10,8 @@ namespace Infrastructure.Data
         { }
 
         public DbSet<TodoItem> TodoItems { get; set; }
+
+        public DbSet<Audit> Audits { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
