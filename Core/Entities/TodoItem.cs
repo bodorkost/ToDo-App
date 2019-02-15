@@ -50,5 +50,26 @@ namespace Core.Entities
 
         [Required]
         public bool IsDeleted { get; set; }
+
+        public int WorkHours
+        {
+            get
+            {
+                int workHours = 0;
+
+                for (var i = DateTime.Now; i < Deadline; i = i.AddHours(1))
+                {
+                    if (i.DayOfWeek != DayOfWeek.Saturday && i.DayOfWeek != DayOfWeek.Sunday)
+                    {
+                        if (i.TimeOfDay.Hours >= 9 && i.TimeOfDay.Hours < 17)
+                        {
+                            ++workHours;
+                        }
+                    }
+                }
+
+                return workHours;
+            }
+        }
     }
 }
