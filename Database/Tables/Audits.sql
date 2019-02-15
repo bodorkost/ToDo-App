@@ -1,0 +1,8 @@
+﻿CREATE TABLE [dbo].[Audits]
+(
+	[Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, 
+    [Url] NVARCHAR(200) NULL, 
+    [Header] NVARCHAR(500) NULL, 
+    [Body] NVARCHAR(MAX) NULL, 
+    [Created] DATETIME2 NULL
+)
