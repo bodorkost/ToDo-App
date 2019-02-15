@@ -4,11 +4,8 @@ using Core.Types;
 
 namespace Core.Entities
 {
-    public class TodoItem
+    public class TodoItem : BaseEntity
     {
-        [Required]
-        public Guid Id { get; set; }
-
         [Required]
         [StringLength(50)]
         public string Name { get; set; }
@@ -30,26 +27,6 @@ namespace Core.Entities
         public Category Category { get; set; }
 
         public Guid? ParentId { get; set; }
-
-        [Required]
-        [DataType(DataType.DateTime)]
-        public DateTime Created { get; set; }
-
-        public Guid CreatedById { get; set; }
-
-        [Required]
-        [DataType(DataType.DateTime)]
-        public DateTime Modified { get; set; }
-
-        public Guid ModifiedById { get; set; }
-
-        [DataType(DataType.DateTime)]
-        public DateTime Deleted { get; set; }
-
-        public Guid DeletedById { get; set; }
-
-        [Required]
-        public bool IsDeleted { get; set; }
 
         public int WorkHours
         {
