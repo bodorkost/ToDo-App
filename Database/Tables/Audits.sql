@@ -4,5 +4,6 @@
     [Url] NVARCHAR(200) NULL, 
     [Header] NVARCHAR(500) NULL, 
     [Body] NVARCHAR(MAX) NULL, 
-    [Created] DATETIME2 NULL
+    [Method] NVARCHAR(10) NULL, 
+    [Created] DATETIME2 NOT NULL
 )

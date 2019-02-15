@@ -12,6 +12,8 @@ namespace Core.Entities
 
         public string Body { get; set; }
 
+        public string Method { get; set; }
+
         public DateTime Created { get; set; }
     }
 }
