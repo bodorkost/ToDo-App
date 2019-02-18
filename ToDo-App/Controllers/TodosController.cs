@@ -12,6 +12,7 @@ using Microsoft.Extensions.Options;
 using System.IO;
 using System.Reflection;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 
 namespace ToDo_App.Controllers
 {
@@ -99,13 +100,9 @@ namespace ToDo_App.Controllers
         [HttpGet("ByCategory/{category}")]
         public IActionResult ReadByCategory(string category)
         {
-            var categoryEntity = _categoryService.GetByDisplayName(category);
-            if(categoryEntity == null)
-            {
-                return NotFound("Category not found.");
-            }
-
-            return Ok(_todoItemService.GetAll().Where(t => t.CategoryId == categoryEntity.Id));
+            return Ok(_todoItemService.GetAll()
+                                      .Include("Category")
+                                      .Where(t => t.Category.DisplayName == category));
         }
 
         [HttpGet("Recent")]
@@ -119,9 +116,9 @@ namespace ToDo_App.Controllers
         [HttpGet("WithCategory")]
         public IActionResult ReadWithCategory()
         {
-            return Ok(_todoItemService.GetAll()
-                                      .GroupBy(t => t.CategoryId, (categoryId, todos) => 
-                                        new { Category = _categoryService.GetById(categoryId.Value).DisplayName, Todos = todos }));
+            return Ok(_todoItemService.GetAll().Include("Category").AsEnumerable()
+                                      .GroupBy(t => t.Category, (category, todos) => 
+                                        new { Category = category.DisplayName, Todos = todos }));
         }
 
         [HttpGet("Tree")]

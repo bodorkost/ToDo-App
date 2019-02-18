@@ -3,6 +3,7 @@ using Core.Entities;
 using Infrastructure.Data;
 using System;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace Infrastructure.Services
 {
@@ -26,7 +27,7 @@ namespace Infrastructure.Services
             item.Responsible = entity.Responsible;
             item.Deadline = entity.Deadline;
             item.Status = entity.Status;
-            item.CategoryId = entity.CategoryId;
+            item.Category = entity.Category;
             item.ParentId = entity.ParentId;
 
             item.Modified = DateTime.Now;

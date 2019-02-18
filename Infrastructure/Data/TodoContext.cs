@@ -17,6 +17,8 @@ namespace Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<TodoItem>().HasOne(c => c.Category);
+
             modelBuilder
                 .Entity<TodoItem>()
                 .HasQueryFilter(t => !t.IsDeleted);

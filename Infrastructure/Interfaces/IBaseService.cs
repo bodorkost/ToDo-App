@@ -1,6 +1,6 @@
 ﻿using Core.Entities;
 using System;
-using System.Collections.Generic;
+using System.Linq;
 
 namespace Infrastructure.Interfaces
 {
@@ -10,7 +10,7 @@ namespace Infrastructure.Interfaces
 
         T GetById(Guid id);
 
-        IEnumerable<T> GetAll();
+        IQueryable<T> GetAll();
 
         T Edit(Guid id, T item);
 

@@ -26,6 +26,8 @@ namespace Core.Entities
 
         public Guid? CategoryId { get; set; }
 
+        public Category Category { get; set; }
+
         public Guid? ParentId { get; set; }
 
         public int WorkHours

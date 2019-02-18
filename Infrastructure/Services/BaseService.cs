@@ -51,9 +51,9 @@ namespace Infrastructure.Services
 
         public abstract T Edit(Guid id, T item);
 
-        public IEnumerable<T> GetAll()
+        public IQueryable<T> GetAll()
         {
-            return _dbContext.Set<T>().AsEnumerable();
+            return _dbContext.Set<T>().AsQueryable();
         }
 
         public T GetById(Guid id)
