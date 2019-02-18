@@ -3,6 +3,7 @@ using Infrastructure.Data;
 using Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 
 namespace Infrastructure.Services
 {
@@ -20,7 +21,7 @@ namespace Infrastructure.Services
                 return null;
             }
 
-            entity.DisplayName = entity.DisplayName;
+            entity.DisplayName = category.DisplayName;
 
             entity.Modified = DateTime.Now;
             //TODO item.ModifiedById 
@@ -29,6 +30,11 @@ namespace Infrastructure.Services
             _dbContext.SaveChanges();
 
             return entity;
+        }
+
+        public Category GetByDisplayName(string name)
+        {
+            return _dbContext.Categories.FirstOrDefault(c => c.DisplayName == name);
         }
     }
 }
