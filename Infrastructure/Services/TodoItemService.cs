@@ -4,6 +4,7 @@ using Infrastructure.Data;
 using System;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Infrastructure.Services
 {
@@ -38,6 +39,13 @@ namespace Infrastructure.Services
             _dbContext.SaveChanges();
 
             return item;
+        }
+
+        public IEnumerable<TodoItem> GetMyTodosFromSql(string responsible)
+        {
+            return _dbContext.TodoItems
+                             .FromSql($"GetTodosByResponsible {responsible}")
+                             .AsEnumerable();
         }
     }
 }

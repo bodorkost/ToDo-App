@@ -156,6 +156,12 @@ namespace ToDo_App.Controllers
             return File(memory, "application /octet-stream", Path.GetFileName(path));
         }
 
+        [HttpGet("MyTodos/{responsible}")]
+        public IActionResult GetMyTodos(string responsible)
+        {
+            return Ok(_todoItemService.GetMyTodosFromSql(responsible));
+        }
+
         private IEnumerable<TreeModel> FillTree(IEnumerable<TodoItem> todos)
         {
             var tree = todos.Select(t => new TreeModel() { TodoItem = t }).ToList();

@@ -58,11 +58,13 @@
   <ItemGroup>
     <Folder Include="Properties" />
     <Folder Include="Tables" />
+    <Folder Include="Procedures" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\TodoItems.sql" />
     <Build Include="Tables\Audits.sql" />
     <Build Include="Tables\Categories.sql" />
+    <Build Include="Procedures\GetTodosByResponsible.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Database.publish.xml" />
