@@ -26,7 +26,7 @@ namespace Infrastructure.Services
             entity.Modified = DateTime.Now;
             //TODO item.ModifiedById 
 
-            _dbContext.Entry(item).Property("RowVersion").OriginalValue = entity.RowVersion;
+            _dbContext.Entry(entity).Property("RowVersion").OriginalValue = category.RowVersion;
             _dbContext.Entry(entity).State = EntityState.Modified;
             _dbContext.SaveChanges();
 
