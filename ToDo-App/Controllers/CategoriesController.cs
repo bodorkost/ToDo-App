@@ -40,19 +40,42 @@ namespace ToDo_App.Controllers
         [HttpGet("{id}")]
         public IActionResult Read(Guid id)
         {
-            return Ok();
+            var readItem = _categoryService.GetById(id);
+            if (readItem == null)
+            {
+                return BadRequest("Item does not exist in list.");
+            }
+
+            return Ok(readItem);
         }
 
         [HttpPatch("{id}")]
         public IActionResult Update(Guid id, [FromBody] Category category)
         {
-            return Ok();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState.GetErrors());
+            }
+
+            var updateItem = _categoryService.Edit(id, category);
+            if (updateItem == null)
+            {
+                return BadRequest("Item does not exist in list.");
+            }
+
+            return Ok("Item successfully updated.");
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
-            return Ok();
+            var removeItem = _categoryService.Delete(id);
+            if (removeItem == null)
+            {
+                return BadRequest("Item does not exist in list.");
+            }
+
+            return Ok("Item successfully removed from list.");
         }
     }
 }
