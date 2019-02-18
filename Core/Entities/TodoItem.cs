@@ -24,7 +24,7 @@ namespace Core.Entities
 
         public Status Status { get; set; }
 
-        public Category Category { get; set; }
+        public Guid? CategoryId { get; set; }
 
         public Guid? ParentId { get; set; }
 

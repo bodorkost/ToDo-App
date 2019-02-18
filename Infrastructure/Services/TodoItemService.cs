@@ -55,7 +55,7 @@ namespace Infrastructure.Services
             item.Responsible = entity.Responsible;
             item.Deadline = entity.Deadline;
             item.Status = entity.Status;
-            item.Category = entity.Category;
+            item.CategoryId = entity.CategoryId;
             item.ParentId = entity.ParentId;
 
             item.Modified = DateTime.Now;

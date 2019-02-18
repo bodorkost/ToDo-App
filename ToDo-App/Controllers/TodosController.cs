@@ -20,15 +20,18 @@ namespace ToDo_App.Controllers
     public class TodosController : ControllerBase
     {
         private readonly ITodoItemService _todoItemService;
+        private readonly ICategoryService _categoryService;
         private readonly IOptions<TodoSettings> _config;
         private readonly IHostingEnvironment _env;
 
         public TodosController(
-            ITodoItemService todoItemService, 
+            ITodoItemService todoItemService,
+            ICategoryService categoryService,
             IOptions<TodoSettings> config, 
             IHostingEnvironment env)
         {
             _todoItemService = todoItemService;
+            _categoryService = categoryService;
             _config = config;
             _env = env;
         }
@@ -94,10 +97,15 @@ namespace ToDo_App.Controllers
         }
 
         [HttpGet("ByCategory/{category}")]
-        public IActionResult ReadByCategory(Category category)
+        public IActionResult ReadByCategory(string category)
         {
-            return Ok(_todoItemService.GetAll()
-                                      .Where(t => t.Category == category));
+            var categoryEntity = _categoryService.GetByDisplayName(category);
+            if(categoryEntity == null)
+            {
+                return NotFound("Category not found.");
+            }
+
+            return Ok(_todoItemService.GetAll().Where(t => t.CategoryId == categoryEntity.Id));
         }
 
         [HttpGet("Recent")]
@@ -112,8 +120,8 @@ namespace ToDo_App.Controllers
         public IActionResult ReadWithCategory()
         {
             return Ok(_todoItemService.GetAll()
-                                      .GroupBy(t => t.Category, (category, todos) => 
-                                        new { Category = category.ToString(), Todos = todos }));
+                                      .GroupBy(t => t.CategoryId, (categoryId, todos) => 
+                                        new { Category = _categoryService.GetById(categoryId.Value).DisplayName, Todos = todos }));
         }
 
         [HttpGet("Tree")]
