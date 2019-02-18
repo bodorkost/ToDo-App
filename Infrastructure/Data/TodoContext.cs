@@ -20,6 +20,10 @@ namespace Infrastructure.Data
             modelBuilder
                 .Entity<TodoItem>()
                 .HasQueryFilter(t => !t.IsDeleted);
+
+            modelBuilder
+                .Entity<Category>()
+                .HasQueryFilter(c => !c.IsDeleted);
         }
     }
 }
