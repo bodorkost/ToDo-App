@@ -36,6 +36,7 @@ namespace ToDo_App
             services.AddCors();
 
             services.AddScoped(typeof(ITodoItemService), typeof(TodoItemService));
+            services.AddScoped(typeof(ICategoryService), typeof(CategoryService));
 
             services.AddMvc(options => 
                     options.Filters.Add(typeof(AuditFilter)))
