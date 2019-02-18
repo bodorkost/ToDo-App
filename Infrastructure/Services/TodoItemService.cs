@@ -33,6 +33,7 @@ namespace Infrastructure.Services
             item.Modified = DateTime.Now;
             //TODO item.ModifiedById 
 
+            _dbContext.Entry(item).Property("RowVersion").OriginalValue = entity.RowVersion;
             _dbContext.Entry(item).State = EntityState.Modified;
             _dbContext.SaveChanges();
 

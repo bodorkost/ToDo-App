@@ -16,5 +16,6 @@
     [Deleted] DATETIME2 NULL, 
     [DeletedById] UNIQUEIDENTIFIER NULL, 
     [IsDeleted] BIT NOT NULL DEFAULT 0, 
+    [RowVersion] ROWVERSION NULL, 
     CONSTRAINT [FK_TodoItems_Categories] FOREIGN KEY ([CategoryId]) REFERENCES [Categories]([Id])
 )

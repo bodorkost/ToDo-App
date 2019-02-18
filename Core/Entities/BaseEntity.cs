@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Core.Entities
 {
-    public class BaseEntity
+    public abstract class BaseEntity
     {
         [Required]
         public Guid Id { get; set; }
@@ -27,5 +27,9 @@ namespace Core.Entities
 
         [Required]
         public bool IsDeleted { get; set; }
+
+        [ConcurrencyCheck]
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
     }
 }

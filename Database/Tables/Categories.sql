@@ -8,5 +8,6 @@
     [ModifiedById] UNIQUEIDENTIFIER NULL, 
     [Deleted] DATETIME2 NOT NULL, 
     [DeletedById] UNIQUEIDENTIFIER NULL, 
-    [IsDeleted] BIT NOT NULL DEFAULT 0
+    [IsDeleted] BIT NOT NULL DEFAULT 0, 
+    [RowVersion] ROWVERSION NULL
 )

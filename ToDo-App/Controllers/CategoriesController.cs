@@ -2,6 +2,7 @@
 using Core.Entities;
 using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ToDo_App.Extensions;
 
 namespace ToDo_App.Controllers
@@ -57,12 +58,19 @@ namespace ToDo_App.Controllers
                 return BadRequest(ModelState.GetErrors());
             }
 
-            var updateItem = _categoryService.Edit(id, category);
-            if (updateItem == null)
+            try
             {
-                return BadRequest("Item does not exist in list.");
+                var updateItem = _categoryService.Edit(id, category);
+                if (updateItem == null)
+                {
+                    return BadRequest("Item does not exist in list.");
+                }
             }
-
+            catch(DbUpdateConcurrencyException)
+            {
+                return Conflict("Conflict has been found.");
+            }
+            
             return Ok("Item successfully updated.");
         }
 

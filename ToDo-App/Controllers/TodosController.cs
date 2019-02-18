@@ -58,11 +58,19 @@ namespace ToDo_App.Controllers
                 return BadRequest(ModelState.GetErrors());
             }
 
-            var updateItem = _todoItemService.Edit(id, item);
-            if (updateItem == null)
+            try
             {
-                return BadRequest("Item does not exist in list.");
+                var updateItem = _todoItemService.Edit(id, item);
+                if (updateItem == null)
+                {
+                    return BadRequest("Item does not exist in list.");
+                }
             }
+            catch (DbUpdateConcurrencyException)
+            {
+                return Conflict("Conflict has been found.");
+            }
+            
 
             return Ok("Item successfully updated.");
         }
