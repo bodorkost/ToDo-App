@@ -188,11 +188,8 @@ namespace Todo_App.Tests
             var id = TestHelper.TodoItems.ElementAt(1).Id;
 
             //Act  
-            var existingItem = controller.Read(id);
-            var okResult = (OkObjectResult)existingItem;
-            var item = (TodoItem)okResult.Value;
+            var item = new TodoItem() { Name = null };
 
-            item.Name = null;
             controller.ModelState.AddModelError("Name", "Name is required.");
 
             var updatedData = controller.Update(id, item);
@@ -218,6 +215,34 @@ namespace Todo_App.Tests
         #endregion
 
         #region Delete
+
+        [Fact]
+        public void Delete_Return_OkResult()
+        {
+            //Arrange  
+            var controller = new TodosController(_todoItemService, null, null);
+            var id = TestHelper.TodoItems.ElementAt(2).Id;
+
+            //Act  
+            var data = controller.Delete(id);
+
+            //Assert  
+            Assert.IsType<OkObjectResult>(data);
+        }
+
+        [Fact]
+        public void Delete_Return_BadRequestResult()
+        {
+            //Arrange  
+            var controller = new TodosController(_todoItemService, null, null);
+            Guid id = Guid.Empty;
+
+            //Act  
+            var data = controller.Delete(id);
+
+            //Assert  
+            Assert.IsType<BadRequestObjectResult>(data);
+        }
 
         #endregion
     }
