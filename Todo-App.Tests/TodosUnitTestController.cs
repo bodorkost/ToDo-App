@@ -1,8 +1,13 @@
+using Core.Entities;
 using Infrastructure.Data;
 using Infrastructure.Interfaces;
 using Infrastructure.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using ToDo_App.Controllers;
 using Xunit;
 
 namespace Todo_App.Tests
@@ -38,6 +43,39 @@ namespace Todo_App.Tests
         #endregion
 
         #region Read All
+
+        [Fact]
+        public void Read_Return_OkResult()
+        {
+            //Arrange  
+            var controller = new TodosController(_todoItemService, null, null);
+
+            //Act  
+            var data = controller.Read();
+
+            //Assert  
+            Assert.IsType<OkObjectResult>(data);
+        }
+
+        [Fact]
+        public void Read_CountTodos_MatchResult()
+        {
+            //Arrange  
+            var controller = new TodosController(_todoItemService, null, null);
+
+            //Act  
+            var data = controller.Read();
+
+            //Assert  
+            Assert.IsType<OkObjectResult>(data);
+
+            var okResult = (OkObjectResult)data;
+            var queryableItems = (IQueryable<TodoItem>)okResult.Value;
+            var itemsCount = queryableItems.AsEnumerable().Count();
+
+            //Assert
+            Assert.Equal(4, itemsCount);
+        }
 
         #endregion
 
