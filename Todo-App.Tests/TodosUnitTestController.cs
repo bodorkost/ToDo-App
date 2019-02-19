@@ -160,6 +160,61 @@ namespace Todo_App.Tests
 
         #region Update
 
+        [Fact]
+        public void Update_ValidData_OkResult()
+        {
+            //Arrange  
+            var controller = new TodosController(_todoItemService, null, null);
+            var id = TestHelper.TodoItems.ElementAt(1).Id;
+
+            //Act  
+            var existingItem = controller.Read(id);
+            var okResult = (OkObjectResult)existingItem;
+            var item = (TodoItem)okResult.Value;
+
+            item.Name = "Updated Todo";
+
+            var updatedData = controller.Update(id, item);
+
+            //Assert  
+            Assert.IsType<OkObjectResult>(updatedData);
+        }
+
+        [Fact]
+        public void Update_InvalidData_BadRequest()
+        {
+            //Arrange  
+            var controller = new TodosController(_todoItemService, null, null);
+            var id = TestHelper.TodoItems.ElementAt(1).Id;
+
+            //Act  
+            var existingItem = controller.Read(id);
+            var okResult = (OkObjectResult)existingItem;
+            var item = (TodoItem)okResult.Value;
+
+            item.Name = null;
+            controller.ModelState.AddModelError("Name", "Name is required.");
+
+            var updatedData = controller.Update(id, item);
+
+            //Assert  
+            Assert.IsType<BadRequestObjectResult>(updatedData);
+        }
+
+        [Fact]
+        public void Update_InvalidId_BadRequest()
+        {
+            //Arrange  
+            var controller = new TodosController(_todoItemService, null, null);
+            var id = Guid.Empty;
+
+            //Act  
+            var updatedData = controller.Update(id, TestHelper.TodoItems.ElementAt(1));
+
+            //Assert  
+            Assert.IsType<BadRequestObjectResult>(updatedData);
+        }
+
         #endregion
 
         #region Delete
