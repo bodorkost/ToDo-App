@@ -61,6 +61,33 @@ namespace Todo_App.Tests
 
         #region Delete
 
+        [Fact]
+        public void Delete_ValidId_DeletedTodoItem()
+        {
+            //Arrange  
+            var id = TestHelper.TodoItems.ElementAt(2).Id;
+
+            //Act  
+            var data = _todoItemService.Delete(id);
+
+            //Assert  
+            Assert.Equal(id, data.Id);
+            Assert.True(data.IsDeleted);
+        }
+
+        [Fact]
+        public void Delete_InvalidId_Null()
+        {
+            //Arrange  
+            Guid id = Guid.Empty;
+
+            //Act  
+            var data = _todoItemService.Delete(id);
+
+            //Assert  
+            Assert.Null(data);
+        }
+
         #endregion
 
         #region Edit
