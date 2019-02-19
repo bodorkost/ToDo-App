@@ -14,7 +14,7 @@ namespace Todo_App.Tests
 {
     public class TodosUnitTestController
     {
-        private ITodoItemService _todoItemService;
+        private readonly ITodoItemService _todoItemService;
         public static DbContextOptions<TodoContext> _dbContextOptions { get; }
         public static string connectionString = "";
 
@@ -35,6 +35,36 @@ namespace Todo_App.Tests
         }
 
         #region Create
+
+        [Fact]
+        public void Create_ValidData_OkResult()
+        {
+            //Arrange  
+            var controller = new TodosController(_todoItemService, null, null);
+            var item = new TodoItem() { Name = "Todo 5", Priority = Priority.CRITICAL, Created = DateTime.Now, Modified = DateTime.Now };
+
+            //Act  
+            var data = controller.Create(item);
+
+            //Assert  
+            Assert.IsType<OkObjectResult>(data);
+        }
+
+        [Fact]
+        public void Create_InvalidData_BadRequest()
+        {
+            //Arrange  
+            var controller = new TodosController(_todoItemService, null, null);
+            var item = new TodoItem() { Priority = Priority.CRITICAL, Created = DateTime.Now, Modified = DateTime.Now };
+
+            controller.ModelState.AddModelError("Name", "Name is required.");
+
+            //Act              
+            var data = controller.Create(item);
+
+            //Assert  
+            Assert.IsType<BadRequestObjectResult>(data);
+        }
 
         #endregion
 
@@ -84,7 +114,7 @@ namespace Todo_App.Tests
             var okResult = (OkObjectResult)data;
             var item = (TodoItem)okResult.Value;
 
-            //Asert
+            //Assert
             Assert.Equal("Todo 1", item.Name);
             Assert.Equal(Priority.IMPORTANT, item.Priority);
         }
