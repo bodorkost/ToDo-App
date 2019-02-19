@@ -5,6 +5,7 @@ using Infrastructure.Interfaces;
 using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 using Xunit;
 
 namespace Todo_App.Tests
@@ -71,6 +72,33 @@ namespace Todo_App.Tests
         #endregion
 
         #region GetById
+
+        [Fact]
+        public void GetById_ValidId_TodoItem()
+        {
+            //Arrange
+            var item = TestHelper.TodoItems.ElementAt(0);
+            var id = item.Id;
+
+            //Act  
+            var data = _todoItemService.GetById(id);
+
+            //Assert  
+            Assert.Equal(item, data);
+        }
+
+        [Fact]
+        public void GetById_InvalidId_Null()
+        {
+            //Arrange  
+            var id = Guid.Empty;
+
+            //Act  
+            var data = _todoItemService.GetById(id);
+
+            //Assert  
+            Assert.Null(data);
+        }
 
         #endregion
 
