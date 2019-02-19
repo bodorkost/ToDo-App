@@ -5,6 +5,10 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Data;
+using System.Data.SqlClient;
+using Core.Types;
+using System.Text;
 
 namespace Infrastructure.Services
 {
@@ -41,11 +45,46 @@ namespace Infrastructure.Services
             return item;
         }
 
-        public IEnumerable<TodoItem> GetMyTodosFromSql(string responsible)
+        public IEnumerable<TodoItem> GetMyTodosFromSql(string responsible, string connectionString)
         {
-            return _dbContext.TodoItems
-                             .FromSql($"GetTodosByResponsible {responsible}")
-                             .AsEnumerable();
+            if (!string.IsNullOrEmpty(connectionString))
+            {
+                DataTable dataTable = new DataTable();
+                using (SqlConnection sqlConn = new SqlConnection(connectionString))
+                {
+                    string sql = "GetTodosByResponsible";
+                    using (SqlCommand sqlCmd = new SqlCommand(sql, sqlConn))
+                    {
+                        sqlCmd.CommandType = CommandType.StoredProcedure;
+                        sqlCmd.Parameters.AddWithValue("@Responsible", responsible);
+                        sqlConn.Open();
+                        using (SqlDataAdapter sqlAdapter = new SqlDataAdapter(sqlCmd))
+                        {
+                            sqlAdapter.Fill(dataTable);
+                        }
+                    }
+                }
+
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    yield return new TodoItem
+                    {
+                        Id = Guid.Parse(row["Id"].ToString()),
+                        Name = row["Name"].ToString(),
+                        Description = row["Description"].ToString(),
+                        Priority = (Priority)row["Priority"],
+                        Responsible = row["Responsible"].ToString(),
+                        Deadline = Convert.ToDateTime(row["Deadline"]),
+                        Status = (Status)row["Status"],
+                        IsDeleted = Convert.ToBoolean(row["IsDeleted"]),
+                        RowVersion = Encoding.ASCII.GetBytes(row["RowVersion"].ToString())
+                    };
+                }
+            }
+
+            //return _dbContext.TodoItems
+            //                 .FromSql($"GetTodosByResponsible {responsible}")
+            //                 .AsEnumerable();
         }
     }
 }

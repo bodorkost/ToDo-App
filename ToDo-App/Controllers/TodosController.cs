@@ -10,9 +10,9 @@ using ToDo_App.Models;
 using Core;
 using Microsoft.Extensions.Options;
 using System.IO;
-using System.Reflection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace ToDo_App.Controllers
 {
@@ -23,15 +23,18 @@ namespace ToDo_App.Controllers
         private readonly ITodoItemService _todoItemService;
         private readonly IOptions<TodoSettings> _config;
         private readonly IHostingEnvironment _env;
+        private readonly string _connectionString;
 
         public TodosController(
             ITodoItemService todoItemService,
             IOptions<TodoSettings> config, 
-            IHostingEnvironment env)
+            IHostingEnvironment env,
+            IConfiguration configuration = null)
         {
             _todoItemService = todoItemService;
             _config = config;
             _env = env;
+            _connectionString = configuration?.GetConnectionString("DefaultConnection");
         }
 
         [HttpPost]
@@ -156,7 +159,7 @@ namespace ToDo_App.Controllers
         [HttpGet("MyTodos/{responsible}")]
         public IActionResult GetMyTodos(string responsible)
         {
-            return Ok(_todoItemService.GetMyTodosFromSql(responsible));
+            return Ok(_todoItemService.GetMyTodosFromSql(responsible, _connectionString));
         }
 
         private IEnumerable<TreeModel> FillTree(IEnumerable<TodoItem> todos)
