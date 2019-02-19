@@ -1,11 +1,11 @@
 using Core.Entities;
+using Core.Types;
 using Infrastructure.Data;
 using Infrastructure.Interfaces;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using ToDo_App.Controllers;
 using Xunit;
@@ -39,6 +39,55 @@ namespace Todo_App.Tests
         #endregion
 
         #region Read By Id
+
+        [Fact]
+        public void ReadById_Return_OkResult()
+        {
+            //Arrange  
+            var controller = new TodosController(_todoItemService, null, null);
+            var id = TestHelper.TodoItems.ElementAt(0).Id;
+
+            //Act  
+            var data = controller.Read(id);
+
+            //Assert  
+            Assert.IsType<OkObjectResult>(data);
+        }
+
+        [Fact]
+        public void ReadById_Return_BadRequestResult()
+        {
+            //Arrange  
+            var controller = new TodosController(_todoItemService, null, null);
+            var id = Guid.Empty;
+
+            //Act  
+            var data = controller.Read(id);
+
+            //Assert  
+            Assert.IsType<BadRequestObjectResult>(data);
+        }
+
+        [Fact]
+        public void ReadById_Return_MatchResult()
+        {
+            //Arrange  
+            var controller = new TodosController(_todoItemService, null, null);
+            var id = TestHelper.TodoItems.ElementAt(0).Id;
+
+            //Act  
+            var data = controller.Read(id);
+
+            //Assert  
+            Assert.IsType<OkObjectResult>(data);
+
+            var okResult = (OkObjectResult)data;
+            var item = (TodoItem)okResult.Value;
+
+            //Asert
+            Assert.Equal("Todo 1", item.Name);
+            Assert.Equal(Priority.IMPORTANT, item.Priority);
+        }
 
         #endregion
 
