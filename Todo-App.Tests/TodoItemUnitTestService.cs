@@ -65,6 +65,48 @@ namespace Todo_App.Tests
 
         #region Edit
 
+        [Fact]
+        public void Edit_ValidData_UpdatedTodoItem()
+        {
+            //Arrange
+            var id = TestHelper.TodoItems.ElementAt(1).Id;
+            var data = _todoItemService.GetById(id);
+
+            //Act
+            var item = new TodoItem() { Id = id, Name = "Updated Todo", Created = data.Created, RowVersion = data.RowVersion };
+            data = _todoItemService.Edit(id, item);
+
+            //Assert  
+            Assert.Equal(id, data.Id);
+            Assert.Equal("Updated Todo", data.Name);
+        }
+
+        [Fact]
+        public void Edit_InvalidData_DbUpdateException()
+        {
+            //Arrange
+            var id = TestHelper.TodoItems.ElementAt(1).Id;
+            var data = _todoItemService.GetById(id);
+
+            var item = new TodoItem() { Id = id, Created = data.Created, RowVersion = data.RowVersion };
+
+            //Act & Assert  
+            Assert.Throws<DbUpdateException>(() => _todoItemService.Edit(id, item));
+        }
+
+        [Fact]
+        public void Edit_InvalidId_Null()
+        {
+            //Arrange  
+            var id = Guid.Empty;
+
+            //Act  
+            var data = _todoItemService.Edit(id, null);
+
+            //Assert  
+            Assert.Null(data);
+        }
+
         #endregion
 
         #region GetAll
@@ -80,7 +122,7 @@ namespace Todo_App.Tests
         }
 
         [Fact]
-        public void Read_CountTodoItems_Match()
+        public void GetAll_CountTodoItems_Match()
         {
             //Act  
             var data = _todoItemService.GetAll();
