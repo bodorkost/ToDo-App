@@ -21,18 +21,15 @@ namespace ToDo_App.Controllers
     public class TodosController : ControllerBase
     {
         private readonly ITodoItemService _todoItemService;
-        private readonly ICategoryService _categoryService;
         private readonly IOptions<TodoSettings> _config;
         private readonly IHostingEnvironment _env;
 
         public TodosController(
             ITodoItemService todoItemService,
-            ICategoryService categoryService,
             IOptions<TodoSettings> config, 
             IHostingEnvironment env)
         {
             _todoItemService = todoItemService;
-            _categoryService = categoryService;
             _config = config;
             _env = env;
         }
