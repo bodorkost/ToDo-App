@@ -69,6 +69,26 @@ namespace Todo_App.Tests
 
         #region GetAll
 
+        [Fact]
+        public void GetAll_Return_TodoItems()
+        {
+            //Act  
+            var data = _todoItemService.GetAll();
+
+            //Assert  
+            Assert.IsAssignableFrom<IQueryable<TodoItem>>(data);
+        }
+
+        [Fact]
+        public void Read_CountTodoItems_Match()
+        {
+            //Act  
+            var data = _todoItemService.GetAll();
+
+            //Assert
+            Assert.Equal(4, data.Count());
+        }
+
         #endregion
 
         #region GetById
