@@ -13,6 +13,8 @@ using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace ToDo_App.Controllers
 {
@@ -23,18 +25,18 @@ namespace ToDo_App.Controllers
         private readonly ITodoItemService _todoItemService;
         private readonly IOptions<TodoSettings> _config;
         private readonly IHostingEnvironment _env;
-        private readonly string _connectionString;
+        private readonly IHttpClientFactory _clientFactory;
 
         public TodosController(
             ITodoItemService todoItemService,
             IOptions<TodoSettings> config, 
             IHostingEnvironment env,
-            IConfiguration configuration = null)
+            IHttpClientFactory clientFactory = null)
         {
             _todoItemService = todoItemService;
             _config = config;
             _env = env;
-            _connectionString = configuration?.GetConnectionString("DefaultConnection");
+            _clientFactory = clientFactory;
         }
 
         [HttpPost]
@@ -159,7 +161,22 @@ namespace ToDo_App.Controllers
         [HttpGet("MyTodos/{responsible}")]
         public IActionResult GetMyTodos(string responsible)
         {
-            return Ok(_todoItemService.GetMyTodosFromSql(responsible, _connectionString));
+            return Ok(_todoItemService.GetMyTodosFromSql(responsible));
+        }
+
+        [HttpGet("Issues")]
+        public async Task<IActionResult> GetGitHubIssues()
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, "repos/aspnet/docs/issues");
+            var response = await _clientFactory.CreateClient("github").SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var issues = await response.Content.ReadAsAsync<IEnumerable<GitHubIssueModel>>();
+                return Ok(issues);
+            }
+
+            return BadRequest("Request failed.");
         }
 
         private IEnumerable<TreeModel> FillTree(IEnumerable<TodoItem> todos)

@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Core.Settings;
 using ToDo_App.Filters;
+using System;
 
 namespace ToDo_App
 {
@@ -34,6 +35,13 @@ namespace ToDo_App
 
             services.AddHealthChecks();
             services.AddCors();
+
+            services.AddHttpClient("github", c =>
+            {
+                c.BaseAddress = new Uri("https://api.github.com/");
+                c.DefaultRequestHeaders.Add("Accept", "application/vnd.github.v3+json");
+                c.DefaultRequestHeaders.Add("User-Agent", "ToDo-App");
+            });
 
             services.AddScoped(typeof(ITodoItemService), typeof(TodoItemService));
             services.AddScoped(typeof(ICategoryService), typeof(CategoryService));
