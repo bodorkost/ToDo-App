@@ -7,7 +7,7 @@ using Infrastructure.Interfaces;
 using ToDo_App.Extensions;
 using System.Collections.Generic;
 using ToDo_App.Models;
-using Core;
+using Core.Settings;
 using Microsoft.Extensions.Options;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;

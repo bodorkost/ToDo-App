@@ -1,4 +1,4 @@
-﻿using Core;
+﻿using Core.Settings;
 using Core.Entities;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http.Internal;
