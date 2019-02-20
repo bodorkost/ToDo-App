@@ -167,7 +167,7 @@ namespace ToDo_App.Controllers
         [HttpGet("Issues")]
         public async Task<IActionResult> GetGitHubIssues()
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, "repos/aspnet/docs/issues");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"repos/{_config.Value.RepoOwner}/{_config.Value.RepoName}/issues");
             var response = await _clientFactory.CreateClient("github").SendAsync(request);
 
             if (response.IsSuccessStatusCode)
@@ -176,7 +176,7 @@ namespace ToDo_App.Controllers
                 return Ok(issues);
             }
 
-            return BadRequest("Request failed.");
+            return BadRequest($"Request failed with status code {(int)response.StatusCode}");
         }
 
         private IEnumerable<TreeModel> FillTree(IEnumerable<TodoItem> todos)

@@ -30,7 +30,7 @@ namespace ToDo_App
             );
 
             services.AddOptions();
-            services.Configure<TodoSettings>(Configuration);
+            services.Configure<TodoSettings>(Configuration.GetSection("TodoSettings"));
             services.Configure<AuditSettings>(Configuration.GetSection("AuditSettings"));
 
             services.AddHealthChecks();
