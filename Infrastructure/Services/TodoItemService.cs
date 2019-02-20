@@ -10,6 +10,7 @@ using System.Data.SqlClient;
 using Core.Types;
 using System.Text;
 using Core.Helpers;
+using Snickler.EFCore;
 
 namespace Infrastructure.Services
 {
@@ -46,35 +47,50 @@ namespace Infrastructure.Services
             return item;
         }
 
-        public IEnumerable<TodoItem> GetMyTodosFromSql(string responsible, string connectionString)
+        public IEnumerable<TodoItem> GetMyTodosFromSql(string responsible)
         {
-            if (!string.IsNullOrEmpty(connectionString))
-            {
-                DataTable dataTable = new DataTable();
-                using (SqlConnection sqlConn = new SqlConnection(connectionString))
-                {
-                    string sql = "GetTodosByResponsible";
-                    using (SqlCommand sqlCmd = new SqlCommand(sql, sqlConn))
-                    {
-                        sqlCmd.CommandType = CommandType.StoredProcedure;
-                        sqlCmd.Parameters.AddWithValue("@Responsible", responsible);
-                        sqlConn.Open();
-                        using (SqlDataAdapter sqlAdapter = new SqlDataAdapter(sqlCmd))
-                        {
-                            sqlAdapter.Fill(dataTable);
-                        }
-                    }
-                }
+            IEnumerable<TodoItem> result = null;
 
-                foreach (DataRow row in dataTable.Rows)
-                {
-                    yield return row.ToObject<TodoItem>();
-                }
-            }
+            _dbContext.LoadStoredProc("dbo.GetTodosByResponsible")
+                      .WithSqlParam("Responsible", responsible)
+                      .ExecuteStoredProc((handler) =>
+                      {
+                          result = handler.ReadToList<TodoItem>();
+                      });
+
+            return result;
+
+            #region Other solutions
+
+            //if (!string.IsNullOrEmpty(connectionString))
+            //{
+            //    DataTable dataTable = new DataTable();
+            //    using (SqlConnection sqlConn = new SqlConnection(connectionString))
+            //    {
+            //        string sql = "GetTodosByResponsible";
+            //        using (SqlCommand sqlCmd = new SqlCommand(sql, sqlConn))
+            //        {
+            //            sqlCmd.CommandType = CommandType.StoredProcedure;
+            //            sqlCmd.Parameters.AddWithValue("@Responsible", responsible);
+            //            sqlConn.Open();
+            //            using (SqlDataAdapter sqlAdapter = new SqlDataAdapter(sqlCmd))
+            //            {
+            //                sqlAdapter.Fill(dataTable);
+            //            }
+            //        }
+            //    }
+
+            //    foreach (DataRow row in dataTable.Rows)
+            //    {
+            //        yield return row.ToObject<TodoItem>();
+            //    }
+            //}
 
             //return _dbContext.TodoItems
             //                 .FromSql($"GetTodosByResponsible {responsible}")
             //                 .AsEnumerable();
+
+            #endregion
         }
     }
 }

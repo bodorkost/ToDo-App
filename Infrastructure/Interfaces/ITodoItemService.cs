@@ -5,6 +5,6 @@ namespace Infrastructure.Interfaces
 {
     public interface ITodoItemService : IBaseService<TodoItem>
     {
-        IEnumerable<TodoItem> GetMyTodosFromSql(string responsible, string connectionString);
+        IEnumerable<TodoItem> GetMyTodosFromSql(string responsible);
     }
 }
