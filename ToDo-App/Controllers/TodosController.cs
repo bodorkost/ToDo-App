@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ToDo_App.Controllers
 {
@@ -39,6 +40,7 @@ namespace ToDo_App.Controllers
             _clientFactory = clientFactory;
         }
 
+        [Authorize]
         [HttpPost]
         public IActionResult Create(TodoItem item)
         {
@@ -52,6 +54,7 @@ namespace ToDo_App.Controllers
             return Ok("Item successfully added to list.");
         }
 
+        [Authorize]
         [HttpPatch("{id}")]
         public IActionResult Update(Guid id, TodoItem item)
         {
@@ -77,6 +80,7 @@ namespace ToDo_App.Controllers
             return Ok("Item successfully updated.");
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
