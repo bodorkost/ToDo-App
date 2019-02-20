@@ -9,6 +9,7 @@ using System.Data;
 using System.Data.SqlClient;
 using Core.Types;
 using System.Text;
+using Core.Helpers;
 
 namespace Infrastructure.Services
 {
@@ -67,18 +68,7 @@ namespace Infrastructure.Services
 
                 foreach (DataRow row in dataTable.Rows)
                 {
-                    yield return new TodoItem
-                    {
-                        Id = Guid.Parse(row["Id"].ToString()),
-                        Name = row["Name"].ToString(),
-                        Description = row["Description"].ToString(),
-                        Priority = (Priority)row["Priority"],
-                        Responsible = row["Responsible"].ToString(),
-                        Deadline = Convert.ToDateTime(row["Deadline"]),
-                        Status = (Status)row["Status"],
-                        IsDeleted = Convert.ToBoolean(row["IsDeleted"]),
-                        RowVersion = Encoding.ASCII.GetBytes(row["RowVersion"].ToString())
-                    };
+                    yield return row.ToObject<TodoItem>();
                 }
             }
 
