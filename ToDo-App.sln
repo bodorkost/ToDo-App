@@ -11,7 +11,27 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastru
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Database", "Database\Database.sqlproj", "{055811E3-0B07-46DE-9910-E11465B341C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Todo-App.Tests", "Todo-App.Tests\Todo-App.Tests.csproj", "{F48E5E3D-D857-45C9-95E3-76DFE0786BC6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Todo-App.Tests", "Todo-App.Tests\Todo-App.Tests.csproj", "{F48E5E3D-D857-45C9-95E3-76DFE0786BC6}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "react-front", "react-front\", "{E946144D-DD0B-404B-898B-BE75E6E9919E}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_52956"
+		Debug.AspNetCompiler.PhysicalPath = "react-front\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_52956\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_52956"
+		Release.AspNetCompiler.PhysicalPath = "react-front\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_52956\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "52956"
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +61,10 @@ Global
 		{F48E5E3D-D857-45C9-95E3-76DFE0786BC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F48E5E3D-D857-45C9-95E3-76DFE0786BC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F48E5E3D-D857-45C9-95E3-76DFE0786BC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E946144D-DD0B-404B-898B-BE75E6E9919E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E946144D-DD0B-404B-898B-BE75E6E9919E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E946144D-DD0B-404B-898B-BE75E6E9919E}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{E946144D-DD0B-404B-898B-BE75E6E9919E}.Release|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
