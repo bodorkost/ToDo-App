@@ -4,6 +4,8 @@
 .gitignore
 .vs
 .vscode
+node_modules
+build
 */bin
 */obj
 **/.toolstarget

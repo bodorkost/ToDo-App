@@ -1,8 +1,18 @@
 version: '3'
 
 services:
-  todoappwebapi:
-    image: todoappwebapi
+  reactapp:
+    image: reactapp
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      
+  todowebapi:
+    image: todowebapi
     build:
       context: .
       dockerfile: ToDo-App/Dockerfile

@@ -31,6 +31,7 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "react-front", "react-front\
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
 		VWDPort = "52956"
+		SlnRelativePath = "react-front\"
 	EndProjectSection
 EndProject
 Global
