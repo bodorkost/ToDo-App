@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Authentication.OAuth;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using Newtonsoft.Json.Linq;
+using Infrastructure.RabbitMQ;
 
 namespace ToDo_App
 {
@@ -40,6 +41,7 @@ namespace ToDo_App
             services.AddOptions();
             services.Configure<TodoSettings>(Configuration.GetSection("TodoSettings"));
             services.Configure<AuditSettings>(Configuration.GetSection("AuditSettings"));
+            services.Configure<MQCreateSettings>(Configuration.GetSection("MQCreateSettings"));
 
             services.AddHealthChecks();
             services.AddCors();
@@ -53,6 +55,8 @@ namespace ToDo_App
 
             services.AddScoped(typeof(ITodoItemService), typeof(TodoItemService));
             services.AddScoped(typeof(ICategoryService), typeof(CategoryService));
+            services.AddScoped(typeof(IRabbitMQService), typeof(RabbitMQService));
+            services.AddSingleton<RabbitMQClient>();
 
             services.AddMvc(options => 
                     options.Filters.Add(typeof(AuditFilter)))
