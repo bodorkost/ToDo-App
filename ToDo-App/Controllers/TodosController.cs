@@ -24,17 +24,20 @@ namespace ToDo_App.Controllers
     public class TodosController : ControllerBase
     {
         private readonly ITodoItemService _todoItemService;
+        private readonly IRabbitMQService _rabbitMQService;
         private readonly IOptions<TodoSettings> _config;
         private readonly IHostingEnvironment _env;
         private readonly IHttpClientFactory _clientFactory;
 
         public TodosController(
             ITodoItemService todoItemService,
+            IRabbitMQService rabbitMQService,
             IOptions<TodoSettings> config, 
             IHostingEnvironment env,
-            IHttpClientFactory clientFactory = null)
+            IHttpClientFactory clientFactory)
         {
             _todoItemService = todoItemService;
+            _rabbitMQService = rabbitMQService;
             _config = config;
             _env = env;
             _clientFactory = clientFactory;
@@ -49,7 +52,15 @@ namespace ToDo_App.Controllers
                 return BadRequest(ModelState.GetErrors());
             }
 
-            _todoItemService.Create(item);
+            try
+            {
+                _todoItemService.Create(item);
+                _rabbitMQService.SendCreate(item);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
             return Ok("Item successfully added to list.");
         }
