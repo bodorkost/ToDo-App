@@ -5,7 +5,6 @@ using Core.Settings;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using RabbitMQ.Client.MessagePatterns;
 
 namespace MQConsumer.RabbitMQ
 {
@@ -42,24 +41,21 @@ namespace MQConsumer.RabbitMQ
                     Console.WriteLine($"Listening for Topic <{_config.RoutingKey}>");
                     Console.WriteLine("------------------------------------------\n");
 
-                    channel.ExchangeDeclare(_config.ExchangeName, _config.Type);
                     channel.QueueDeclare(_config.QueueName, true, false, false, null);
-                    channel.QueueBind(_config.QueueName, _config.ExchangeName, _config.RoutingKey);
 
-                    channel.BasicQos(0, 10, false);
-                    Subscription subscription = new Subscription(channel, _config.QueueName, false);
-
-                    while (true)
+                    var consumer = new EventingBasicConsumer(channel);
+                    consumer.Received += (model, ea) =>
                     {
-                        BasicDeliverEventArgs deliveryArguments = subscription.Next();
-
-                        var json = Encoding.Default.GetString(deliveryArguments.Body);
+                        var body = ea.Body;
+                        var json = Encoding.UTF8.GetString(body);
                         var message = (TodoItem)JsonConvert.DeserializeObject(json, typeof(TodoItem));
-                        var routingKey = deliveryArguments.RoutingKey;
+                        var routingKey = ea.RoutingKey;
 
-                        Console.WriteLine($"-- Create TodoItem- Routing Key <{routingKey}> : {message.Id} -- {message.Name}, ");
-                        subscription.Ack(deliveryArguments);
-                    }
+                        Console.WriteLine($"-- Create TodoItem - Routing Key <{routingKey}> : {message.Id} -- {message.Name}");
+                    };
+                    channel.BasicConsume(queue: _config.QueueName, autoAck: true, consumer: consumer);
+
+                    Console.ReadLine();
                 }
             }
         }
