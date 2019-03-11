@@ -51,9 +51,29 @@ namespace MQConsumer.RabbitMQ
                         var message = (TodoItem)JsonConvert.DeserializeObject(json, typeof(TodoItem));
                         var routingKey = ea.RoutingKey;
 
-                        Console.WriteLine($"-- Create TodoItem - Routing Key <{routingKey}> : {message.Id} -- {message.Name}");
+                        try
+                        {
+                            // Dummy condition for nack
+                            if (string.IsNullOrEmpty(message.Description))
+                            {
+                                throw new ArgumentNullException();
+                            }
+
+                            Console.WriteLine($"-- Create TodoItem - Routing Key <{routingKey}> : {message.Id} -- {message.Name} -- Ack");
+                            channel.BasicAck(ea.DeliveryTag, false);
+                        }
+                        catch(ArgumentNullException)
+                        {
+                            Console.WriteLine($"-- Create TodoItem - Routing Key <{routingKey}> : {message.Id} -- {message.Name} -- Nack (not requeued)");
+                            channel.BasicNack(ea.DeliveryTag, false, false);
+                        }
+                        catch(Exception)
+                        {
+                            Console.WriteLine($"-- Create TodoItem - Routing Key <{routingKey}> : {message.Id} -- {message.Name} -- Nack (requeued)");
+                            channel.BasicNack(ea.DeliveryTag, false, true);
+                        }
                     };
-                    channel.BasicConsume(queue: _config.QueueName, autoAck: true, consumer: consumer);
+                    channel.BasicConsume(queue: _config.QueueName, autoAck: false, consumer: consumer);
 
                     Console.ReadLine();
                 }
