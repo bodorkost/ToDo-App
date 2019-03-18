@@ -1,10 +1,11 @@
 ﻿using Core.Entities;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 
 namespace Infrastructure.Interfaces
 {
     public interface ITodoItemService : IBaseService<TodoItem>
     {
-        IEnumerable<TodoItem> GetMyTodosFromSql(string responsible);
+        Task<IEnumerable<TodoItem>> GetMyTodosFromSql(string responsible);
     }
 }

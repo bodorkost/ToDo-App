@@ -3,7 +3,7 @@ using Infrastructure.Data;
 using Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Linq;
+using System.Threading.Tasks;
 
 namespace Infrastructure.Services
 {
@@ -13,9 +13,9 @@ namespace Infrastructure.Services
         {
         }
 
-        public override Category Edit(Guid id, Category category)
+        public override async Task<Category> Edit(Guid id, Category category)
         {
-            var entity = GetById(id);
+            var entity = await GetById(id);
             if (entity == null)
             {
                 return null;
@@ -28,14 +28,14 @@ namespace Infrastructure.Services
 
             _dbContext.Entry(entity).Property("RowVersion").OriginalValue = category.RowVersion;
             _dbContext.Entry(entity).State = EntityState.Modified;
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
 
             return entity;
         }
 
-        public Category GetByDisplayName(string name)
+        public async Task<Category> GetByDisplayName(string name)
         {
-            return _dbContext.Categories.FirstOrDefault(c => c.DisplayName == name);
+            return await _dbContext.Categories.FirstOrDefaultAsync(c => c.DisplayName == name);
         }
     }
 }

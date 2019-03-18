@@ -1,19 +1,20 @@
 ﻿using Core.Entities;
 using System;
-using System.Linq;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace Infrastructure.Interfaces
 {
     public interface IBaseService<T> where T : BaseEntity
     {
-        T Create(T item);
+        Task<T> Create(T item);
 
-        T GetById(Guid id);
+        Task<T> GetById(Guid id);
 
-        IQueryable<T> GetAll();
+        Task<IEnumerable<T>> GetAll();
 
-        T Edit(Guid id, T item);
+        Task<T> Edit(Guid id, T item);
 
-        T Delete(Guid id);
+        Task<T> Delete(Guid id);
     }
 }

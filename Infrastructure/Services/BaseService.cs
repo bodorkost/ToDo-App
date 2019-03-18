@@ -3,8 +3,8 @@ using Infrastructure.Data;
 using Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Infrastructure.Services
 {
@@ -17,7 +17,7 @@ namespace Infrastructure.Services
             _dbContext = context;
         }
 
-        public T Create(T item)
+        public async Task<T> Create(T item)
         {
             item.Id = Guid.NewGuid();
             item.Created = DateTime.Now;
@@ -26,14 +26,14 @@ namespace Infrastructure.Services
             //TODO entity.ModifiedById 
 
             _dbContext.Set<T>().Add(item);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
 
             return item;
         }
 
-        public T Delete(Guid id)
+        public async Task<T> Delete(Guid id)
         {
-            var item = GetById(id);
+            var item = await GetById(id);
             if (item == null)
             {
                 return null;
@@ -44,21 +44,21 @@ namespace Infrastructure.Services
             //TODO item.DeletedById
 
             _dbContext.Entry(item).State = EntityState.Modified;
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
 
             return item;
         }
 
-        public abstract T Edit(Guid id, T item);
+        public abstract Task<T> Edit(Guid id, T item);
 
-        public IQueryable<T> GetAll()
+        public virtual async Task<IEnumerable<T>> GetAll()
         {
-            return _dbContext.Set<T>().AsQueryable();
+            return await _dbContext.Set<T>().ToListAsync();
         }
 
-        public T GetById(Guid id)
+        public async Task<T> GetById(Guid id)
         {
-            return _dbContext.Set<T>().Find(id);
+            return await _dbContext.Set<T>().FindAsync(id);
         }
     }
 }

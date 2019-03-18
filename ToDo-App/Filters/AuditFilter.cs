@@ -6,10 +6,11 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Options;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace ToDo_App.Filters
 {
-    public class AuditFilter : IActionFilter
+    public class AuditFilter : IAsyncActionFilter
     {
         private readonly TodoContext _dbContext;
         private readonly IOptions<AuditSettings> _config;
@@ -20,9 +21,9 @@ namespace ToDo_App.Filters
             _config = config;
         }
 
-        public void OnActionExecuting(ActionExecutingContext filterContext)
+        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            var request = filterContext.HttpContext.Request;
+            var request = context.HttpContext.Request;
 
             var entity = new Audit()
             {
@@ -39,15 +40,14 @@ namespace ToDo_App.Filters
                 request.Body.Seek(0, SeekOrigin.Begin);
                 using (var reader = new StreamReader(request.Body))
                 {
-                    entity.Body = reader.ReadToEnd();
+                    entity.Body = await reader.ReadToEndAsync();
                 }
             }
 
             _dbContext.Audits.Add(entity);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
+
+            await next();
         }
-
-        public void OnActionExecuted(ActionExecutedContext context) { }
-
     }
 }

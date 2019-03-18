@@ -1,9 +1,10 @@
 ﻿using Core.Entities;
+using System.Threading.Tasks;
 
 namespace Infrastructure.Interfaces
 {
     public interface ICategoryService : IBaseService<Category>
     {
-        Category GetByDisplayName(string name);
+        Task<Category> GetByDisplayName(string name);
     }
 }

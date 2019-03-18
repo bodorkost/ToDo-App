@@ -12,7 +12,6 @@ using Microsoft.Extensions.Options;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -45,7 +44,7 @@ namespace ToDo_App.Controllers
 
         [Authorize]
         [HttpPost]
-        public IActionResult Create(TodoItem item)
+        public async Task<IActionResult> Create(TodoItem item)
         {
             if (!ModelState.IsValid)
             {
@@ -54,7 +53,7 @@ namespace ToDo_App.Controllers
 
             try
             {
-                _todoItemService.Create(item);
+                await _todoItemService.Create(item);
                 _rabbitMQService.SendCreate(item);
             }
             catch (Exception ex)
@@ -67,7 +66,7 @@ namespace ToDo_App.Controllers
 
         [Authorize]
         [HttpPatch("{id}")]
-        public IActionResult Update(Guid id, TodoItem item)
+        public async Task<IActionResult> Update(Guid id, TodoItem item)
         {
             if (!ModelState.IsValid)
             {
@@ -76,7 +75,7 @@ namespace ToDo_App.Controllers
 
             try
             {
-                var updateItem = _todoItemService.Edit(id, item);
+                var updateItem = await _todoItemService.Edit(id, item);
                 if (updateItem == null)
                 {
                     return BadRequest("Item does not exist in list.");
@@ -87,15 +86,14 @@ namespace ToDo_App.Controllers
                 return Conflict("Conflict has been found.");
             }
             
-
             return Ok("Item successfully updated.");
         }
 
         [Authorize]
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            var removeItem = _todoItemService.Delete(id);
+            var removeItem = await _todoItemService.Delete(id);
             if (removeItem == null)
             {
                 return BadRequest("Item does not exist in list.");
@@ -105,9 +103,9 @@ namespace ToDo_App.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult Read(Guid id)
+        public async Task<IActionResult> Read(Guid id)
         {
-            var readItem = _todoItemService.GetById(id);
+            var readItem = await _todoItemService.GetById(id);
             if (readItem == null)
             {
                 return BadRequest("Item does not exist in list.");
@@ -117,44 +115,43 @@ namespace ToDo_App.Controllers
         }
 
         [HttpGet]
-        public IActionResult Read()
+        public async Task<IActionResult> Read()
         {
-            return Ok(_todoItemService.GetAll());
+            return Ok(await _todoItemService.GetAll());
         }
 
         [HttpGet("ByCategory/{category}")]
-        public IActionResult ReadByCategory(string category)
+        public async Task<IActionResult> ReadByCategory(string category)
         {
-            return Ok(_todoItemService.GetAll()
-                                      .Include("Category")
-                                      .Where(t => t.Category.DisplayName == category));
+            var todoItems = await _todoItemService.GetAll();
+            return Ok(todoItems.Where(t => t.Category?.DisplayName == category.ToUpper()));
         }
 
         [HttpGet("Recent")]
-        public IActionResult ReadByRecent()
+        public async Task<IActionResult> ReadByRecent()
         {
-            return Ok(_todoItemService.GetAll()
-                                      .Where(t => t.Status == Status.OPEN 
-                                            || (t.Status == Status.CLOSED && t.Modified > DateTime.Now.AddHours(_config.Value.RecentHours) && t.Modified < DateTime.Now)));
+            var todoItems = await _todoItemService.GetAll();
+            return Ok(todoItems.Where(t => t.Status == Status.OPEN 
+                                      || (t.Status == Status.CLOSED && t.Modified > DateTime.Now.AddHours(_config.Value.RecentHours) && t.Modified < DateTime.Now)));
         }
 
         [HttpGet("WithCategory")]
-        public IActionResult ReadWithCategory()
+        public async Task<IActionResult> ReadWithCategory()
         {
-            return Ok(_todoItemService.GetAll().Include("Category").AsEnumerable()
-                                      .GroupBy(t => t.Category, (category, todos) => 
-                                        new { Category = category.DisplayName, Todos = todos }));
+            var todoItems = await _todoItemService.GetAll();
+            return Ok(todoItems.GroupBy(t => t.Category, (category, todos) => 
+                                        new { Category = category?.DisplayName, Todos = todos }));
         }
 
         [HttpGet("Tree")]
-        public IActionResult ReadTree()
+        public async Task<IActionResult> ReadTree()
         {
-            //return Ok(FillTreeRecursive(_todoItemService.GetAll()));
-            return Ok(FillTree(_todoItemService.GetAll().OrderBy(t => t.Modified)));
+            var todoItems = await _todoItemService.GetAll();
+            return Ok(FillTree(todoItems.OrderBy(t => t.Modified)));
         }
 
         [HttpGet("Thumbnail/{category}")]
-        public IActionResult GetCategoryThumbnail(string category)
+        public async Task<IActionResult> GetCategoryThumbnail(string category)
         {
             var path = Path.Combine(_env.ContentRootPath, "Assets", "Images", "Category", $"{category.ToLower()}.png");
 
@@ -166,7 +163,7 @@ namespace ToDo_App.Controllers
             var memory = new MemoryStream();
             using (var stream = new FileStream(path, FileMode.Open))
             {
-                stream.CopyTo(memory);
+                await stream.CopyToAsync(memory);
             }
             memory.Position = 0;
 
@@ -174,9 +171,9 @@ namespace ToDo_App.Controllers
         }
 
         [HttpGet("MyTodos/{responsible}")]
-        public IActionResult GetMyTodos(string responsible)
+        public async Task<IActionResult> GetMyTodos(string responsible)
         {
-            return Ok(_todoItemService.GetMyTodosFromSql(responsible));
+            return Ok(await _todoItemService.GetMyTodosFromSql(responsible));
         }
 
         [HttpGet("Issues")]
