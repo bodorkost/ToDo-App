@@ -21,7 +21,6 @@ using Newtonsoft.Json.Linq;
 using Infrastructure.RabbitMQ;
 using SolrNet;
 using Core.Entities;
-using SolrNet.Mapping;
 
 namespace ToDo_App
 {
@@ -63,6 +62,7 @@ namespace ToDo_App
             services.AddScoped(typeof(ITodoItemService), typeof(TodoItemService));
             services.AddScoped(typeof(ICategoryService), typeof(CategoryService));
             services.AddScoped(typeof(IRabbitMQService), typeof(RabbitMQService));
+            services.AddScoped(typeof(ISolrService), typeof(SolrService));
             services.AddSingleton<RabbitMQClient>();
 
             services.AddMvc(options => 

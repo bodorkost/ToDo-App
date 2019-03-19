@@ -25,6 +25,7 @@ namespace ToDo_App.Controllers
     {
         private readonly ITodoItemService _todoItemService;
         private readonly IRabbitMQService _rabbitMQService;
+        private readonly ISolrService _solrService;
         private readonly IOptions<TodoSettings> _config;
         private readonly IHostingEnvironment _env;
         private readonly IHttpClientFactory _clientFactory;
@@ -32,12 +33,14 @@ namespace ToDo_App.Controllers
         public TodosController(
             ITodoItemService todoItemService,
             IRabbitMQService rabbitMQService,
+            ISolrService solrService,
             IOptions<TodoSettings> config, 
             IHostingEnvironment env,
             IHttpClientFactory clientFactory)
         {
             _todoItemService = todoItemService;
             _rabbitMQService = rabbitMQService;
+            _solrService = solrService;
             _config = config;
             _env = env;
             _clientFactory = clientFactory;
@@ -199,9 +202,23 @@ namespace ToDo_App.Controllers
         {
             try
             {
-                return Ok( _todoItemService.SolrSearch(searchText));
+                return Ok( _solrService.Search(searchText));
             }
             catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("PopulateData")]
+        public IActionResult PopulateData()
+        {
+            try
+            {
+                _solrService.PopulateData();
+                return Ok("Populate finished successfully.");
+            }
+            catch (Exception e)
             {
                 return BadRequest(e.Message);
             }
