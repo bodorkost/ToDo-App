@@ -191,6 +191,19 @@ namespace ToDo_App.Controllers
             return BadRequest($"Request failed with status code {(int)response.StatusCode}");
         }
 
+        [HttpGet("Search/{searchText?}")]
+        public async Task<IActionResult> SolrSearch(string searchText)
+        {
+            try
+            {
+                return Ok(await _todoItemService.SolrSearch(searchText));
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
         private IEnumerable<TreeModel> FillTree(IEnumerable<TodoItem> todos)
         {
             var tree = todos.Select(t => new TreeModel() { TodoItem = t }).ToList();
