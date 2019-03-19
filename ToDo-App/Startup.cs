@@ -19,6 +19,9 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using Newtonsoft.Json.Linq;
 using Infrastructure.RabbitMQ;
+using SolrNet;
+using Core.Entities;
+using SolrNet.Mapping;
 
 namespace ToDo_App
 {
@@ -45,6 +48,10 @@ namespace ToDo_App
 
             services.AddHealthChecks();
             services.AddCors();
+
+
+            services.AddSolrNet(Configuration["SolrNet:DefaultConnection"]);
+            services.AddSolrNet<TodoItem>(Configuration["SolrNet:TodoItemConnection"]);
 
             services.AddHttpClient("github", c =>
             {

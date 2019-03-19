@@ -5,14 +5,27 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using Snickler.EFCore;
+using SolrNet;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Services
 {
     public class TodoItemService : BaseService<TodoItem>, ITodoItemService
     {
-        public TodoItemService(TodoContext context) : base(context)
+        private readonly ISolrOperations<TodoItem> _solr;
+
+        public TodoItemService(TodoContext context, ISolrOperations<TodoItem> solr) : base(context)
         {
+            _solr = solr;
+            SolrRefresh();
+        }
+
+        private void InitSolr()
+        {
+            _solr.Delete(SolrQuery.All);
+            _solr.AddRange(_dbContext.TodoItems.AsEnumerable());
+            _solr.Commit();
         }
 
         public override async Task<TodoItem> Edit(Guid id, TodoItem entity)
@@ -91,6 +104,19 @@ namespace Infrastructure.Services
             //                 .AsEnumerable();
 
             #endregion
+        }
+
+        public IEnumerable<TodoItem> SolrSearch(string searchText)
+        {
+            var condition = string.IsNullOrEmpty(searchText) ? "*:*" : $"Name:{searchText} OR Description:{searchText} OR Responsible:{searchText} OR Status:{searchText} OR Priority:{searchText}";
+            return _solr.Query(new SolrQuery(condition)).ToList();
+        }
+
+        public void SolrRefresh()
+        {
+            _solr.Delete(SolrQuery.All);
+            _solr.AddRange(_dbContext.TodoItems.AsEnumerable());
+            _solr.Commit();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SolrNet.Attributes;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Core.Entities
@@ -6,6 +7,7 @@ namespace Core.Entities
     public abstract class BaseEntity
     {
         [Required]
+        [SolrUniqueKey]
         public Guid Id { get; set; }
 
         [Required]

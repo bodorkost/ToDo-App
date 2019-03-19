@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using Core.Types;
+using SolrNet.Attributes;
 
 namespace Core.Entities
 {
@@ -8,20 +9,25 @@ namespace Core.Entities
     {
         [Required]
         [StringLength(50)]
+        [SolrField]
         public string Name { get; set; }
 
         [StringLength(500)]
+        [SolrField]
         public string Description { get; set; }
 
         [Required]
+        [SolrField]
         public Priority Priority { get; set; }
 
         [StringLength(50)]
+        [SolrField]
         public string Responsible { get; set; }
 
         [DataType(DataType.DateTime)]
         public DateTime Deadline { get; set; }
 
+        [SolrField]
         public Status Status { get; set; }
 
         public Guid? CategoryId { get; set; }
