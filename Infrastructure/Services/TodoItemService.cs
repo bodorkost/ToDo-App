@@ -4,10 +4,9 @@ using Infrastructure.Data;
 using System;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using Snickler.EFCore;
 using SolrNet;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Services
 {
@@ -28,10 +27,10 @@ namespace Infrastructure.Services
             _solr.Commit();
         }
 
-        public override async Task<TodoItem> Edit(Guid id, TodoItem entity)
+        public override TodoItem Edit(Guid id, TodoItem entity)
         {
-            var item = await GetById(id);
-            if (item == null)
+            var item = GetById(id);
+            if(item == null)
             {
                 return null;
             }
@@ -42,7 +41,7 @@ namespace Infrastructure.Services
             item.Responsible = entity.Responsible;
             item.Deadline = entity.Deadline;
             item.Status = entity.Status;
-            item.CategoryId = entity.CategoryId;
+            item.Category = entity.Category;
             item.ParentId = entity.ParentId;
 
             item.Modified = DateTime.Now;
@@ -50,23 +49,18 @@ namespace Infrastructure.Services
 
             _dbContext.Entry(item).Property("RowVersion").OriginalValue = entity.RowVersion;
             _dbContext.Entry(item).State = EntityState.Modified;
-            await _dbContext.SaveChangesAsync();
+            _dbContext.SaveChanges();
 
             return item;
         }
 
-        public override async Task<IEnumerable<TodoItem>> GetAll()
-        {
-            return await _dbContext.TodoItems.Include(t => t.Category).ToListAsync();
-        }
-
-        public async Task<IEnumerable<TodoItem>> GetMyTodosFromSql(string responsible)
+        public IEnumerable<TodoItem> GetMyTodosFromSql(string responsible)
         {
             IEnumerable<TodoItem> result = null;
 
-            await _dbContext.LoadStoredProc("dbo.GetTodosByResponsible")
+            _dbContext.LoadStoredProc("dbo.GetTodosByResponsible")
                       .WithSqlParam("Responsible", responsible)
-                      .ExecuteStoredProcAsync((handler) =>
+                      .ExecuteStoredProc((handler) =>
                       {
                           result = handler.ReadToList<TodoItem>();
                       });
